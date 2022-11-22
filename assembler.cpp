@@ -34,11 +34,9 @@ std::unordered_map<Token, uint16_t> opcode_table = {
     {"INPUT",  12},
     {"OUTPUT", 13},
     {"STOP",   14},
-
-    // not actually opcodes
-    {"SPACE",   15},
-    {"CONST",   16},
 };
+
+std::unordered_set<Token> directives = { "SPACE", "CONST" };
 
 SymbolTable build_symbol_table(const vector<Token>& tokens) {
     SymbolTable table;
@@ -50,9 +48,16 @@ SymbolTable build_symbol_table(const vector<Token>& tokens) {
             // Found a label
             table[tokens[i]] = pos;
             i += 2;
+        } else if (directives.count(tokens[i])) {
+            if (tokens[i] == "SPACE") {
+                i++;
+                pos++;
+            } else if (tokens[i] == "CONST") {
+                i += 2;
+                pos++;
+            }
         } else {
             auto words = op_word_size(tokens[i]);
-            if (tokens[i] == "CONST") i++;
             i += words;
             pos += words;
         }
@@ -73,11 +78,25 @@ void push_code(
     };
 
     size_t n = tokens.size();
-    auto opcode = opcode_table[tokens[i]];
 
-    // Don't push pseudo-opcodes like SPACE and CONST
-    if (opcode <= 14)
-        code.push_back(opcode);
+    if (directives.count(tokens[i])) {
+        // token is a directive
+        auto& dir = tokens[i];
+        if (dir == "SPACE") {
+            code.push_back(0);
+            i++;
+        } else if (dir == "CONST") {
+            assert(i+1 < n && "missing argument for CONST");
+            code.push_back(std::stoi(tokens[i+1]));
+            i += 2;
+        }
+
+        return;
+    }
+
+    // token is an operation
+    auto opcode = opcode_table[tokens[i]];
+    code.push_back(opcode);
 
     switch (opcode) {
         case 1: case 2: case 3: case 4: // ADD, SUB, MUL, DIV
@@ -97,15 +116,6 @@ void push_code(
             i += 3;
             break;
 
-        case 15: // SPACE
-            code.push_back(0);
-            i++;
-            break;
-        case 16: // CONST
-            assert(i+1 < n && "missing argument for CONST");
-            code.push_back(std::stoi(tokens[i+1]));
-            i += 2;
-            break;
 
         default: // STOP
             i++;
