@@ -3,13 +3,12 @@
 size_t op_word_size(const Token& op) {
     auto is = [&](const char* s) { return op == s; };
 
-    if (is("STOP") || is("SPACE"))
+    if (is("STOP") || is("SPACE") || is("CONST"))
         return 1;
 
     if (is("ADD") || is("SUB") || is("MUL") || is("DIV") ||
         is("JMP") || is("JMPN") || is("JMPP") || is("JMPZ") ||
-        is("LOAD") || is("STORE") || is("INPUT") || is("OUTPUT") ||
-        is("CONST"))
+        is("LOAD") || is("STORE") || is("INPUT") || is("OUTPUT"))
         return 2;
 
     if (is("COPY"))
@@ -53,27 +52,32 @@ SymbolTable build_symbol_table(const vector<Token>& tokens) {
             i += 2;
         } else {
             auto words = op_word_size(tokens[i]);
+            if (tokens[i] == "CONST") i++;
             i += words;
             pos += words;
         }
     }
-
-    std::cerr << "Table: ----------------------------" << std::endl;
-    for (const auto& [key, value] : table)
-        std::cerr << key << " -> " << value << std::endl;
-    std::cerr << "-----------------------------------" << std::endl;
 
     return table;
 }
 
 void push_code(
     vector<uint16_t>& code, const vector<Token>& tokens,
-    size_t& i, SymbolTable& symbols
+    size_t& i, const SymbolTable& symbols
 ) {
+
+    auto symbol = [&](const Token& key) {
+        const auto entry = symbols.find(key);
+        assert(entry != symbols.end() && "Symbol not found");
+        return entry->second;
+    };
 
     size_t n = tokens.size();
     auto opcode = opcode_table[tokens[i]];
-    code.push_back(opcode);
+
+    // Don't push pseudo-opcodes like SPACE and CONST
+    if (opcode <= 14)
+        code.push_back(opcode);
 
     switch (opcode) {
         case 1: case 2: case 3: case 4: // ADD, SUB, MUL, DIV
@@ -82,14 +86,14 @@ void push_code(
             // TODO: what if OP isn't a label, but is actually
             // an absolute memory position? Is this legal?
             assert(i+1 < n && "missing arguments for operation");
-            code.push_back(symbols[tokens[i+1]]);
+            code.push_back(symbol(tokens[i+1]));
             i += 2;
             break;
 
         case 9: // COPY
             assert(i+2 < n && "missing arguments for COPY");
-            code.push_back(symbols[tokens[i+1]]);
-            code.push_back(symbols[tokens[i+2]]);
+            code.push_back(symbol(tokens[i+1]));
+            code.push_back(symbol(tokens[i+2]));
             i += 3;
             break;
 
@@ -97,7 +101,7 @@ void push_code(
             code.push_back(0);
             i++;
             break;
-        case 16: // CONSt
+        case 16: // CONST
             assert(i+1 < n && "missing argument for CONST");
             code.push_back(std::stoi(tokens[i+1]));
             i += 2;
@@ -109,9 +113,7 @@ void push_code(
     }
 }
 
-vector<uint16_t> assemble(const vector<Token>& tokens) {
-    auto symbols = build_symbol_table(tokens);
-
+vector<uint16_t> assemble(const vector<Token>& tokens, const SymbolTable& symbols) {
     vector<uint16_t> code;
     size_t n = tokens.size();
     size_t i = 0;

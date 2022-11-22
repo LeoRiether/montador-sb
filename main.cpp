@@ -20,13 +20,37 @@ int main(int argc, char* argv[]) {
     std::ifstream file(argv[1]);
     auto tokens = lex(file);
 
+    // Print tokens
+#ifdef DEBUG
+    cerr << "╭ Tokens: ────────────────────────────────────────────────────────────────–––..." << endl;
+    cerr << "│ ";
     for (auto tok : tokens)
         cerr << "<" << tok << "> ";
     cerr << endl;
+    cerr << "╰─────────────────────────────────────────────────────────────────────────–––..." << endl;
+#endif
 
-    auto words = assemble(tokens);
+    auto symbols = build_symbol_table(tokens);
+
+    // Print symbol table 
+#ifdef DEBUG
+    cerr << "╭ Symbol Table: ───────────────────────────────────────────────────────────────╮" << endl;
+    for (auto [key, value] : symbols) {
+        std::string line = key + " -> " + std::to_string(value);
+        cerr << "│ " << line;
+        int padding = 77 - line.size();
+        while (padding--) cerr << ' ';
+        cerr << "│" << endl;
+    }
+    cerr << "╰──────────────────────────────────────────────────────────────────────────────╯" << endl;
+#endif
+
+    // Assemble program...
+    auto code = assemble(tokens, symbols);
+
+    // ...and write it to the output file
     std::ofstream output(argv[2], std::ios::out | std::ios::binary);
-    output.write(reinterpret_cast<const char*>(&words[0]), words.size() * sizeof(words[0]));
+    output.write(reinterpret_cast<const char*>(&code[0]), code.size() * sizeof(code[0]));
     output.close();
 
     return 0;
