@@ -8,12 +8,13 @@ using std::vector;
 
 enum Opcode {
     Add = 1, Sub, Mul, Div, Jmp, Jmpn, Jmpp, Jmpz, Copy,
-    Load, Store, Input, Output, Stop
+    Load, Store, Input, Output, Stop, Hello
 };
 
-const char* opname[32] = {
+const char* opname[] = {
     "?", "ADD", "SUB", "MUL", "DIV", "JMP", "JMPN", "JMPP",
-    "JMPZ", "COPY", "LOAD", "STORE", "INPUT", "OUTPUT", "STOP"
+    "JMPZ", "COPY", "LOAD", "STORE", "INPUT", "OUTPUT", "STOP",
+    "HELLO",
 };
 
 // kind of copied from assembler.cpp
@@ -112,6 +113,11 @@ void interpret(vector<uint16_t>& mem) {
             }
             case Stop: {
                 return;
+            }
+            case Hello: {
+                std::cout << "Hello World!" << std::endl;
+                pc++;
+                break;
             }
             default: {
                 std::cerr << "Fatal error! Operation not found: " << op << std::endl;

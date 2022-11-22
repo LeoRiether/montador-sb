@@ -3,7 +3,7 @@
 size_t op_word_size(const Token& op) {
     auto is = [&](const char* s) { return op == s; };
 
-    if (is("STOP") || is("SPACE") || is("CONST"))
+    if (is("STOP") || is("HELLO"))
         return 1;
 
     if (is("ADD") || is("SUB") || is("MUL") || is("DIV") ||
@@ -34,6 +34,7 @@ std::unordered_map<Token, uint16_t> opcode_table = {
     {"INPUT",  12},
     {"OUTPUT", 13},
     {"STOP",   14},
+    {"HELLO",  15},
 };
 
 std::unordered_set<Token> directives = { "SPACE", "CONST" };
@@ -116,8 +117,7 @@ void push_code(
             i += 3;
             break;
 
-
-        default: // STOP
+        default: // STOP, HELLO
             i++;
             break;
     }

@@ -2,6 +2,7 @@
 
 INPUT  B      ; Lê a base
 INPUT  H      ; Lê a altura
+HELLO         ; Imprime Hello World!
 LOAD   B      ; Carrega B no acumulador
 MUL    H      ; ACC tem B+H
 DIV DOIS      ; ACC tem o resultado de (B+H)/2

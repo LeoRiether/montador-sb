@@ -22,7 +22,7 @@ int main(int argc, char* argv[]) {
 
     // Print tokens
 #ifdef DEBUG
-    cerr << "╭ Tokens: ────────────────────────────────────────────────────────────────–––..." << endl;
+    cerr << "╭ Tokens ─────────────────────────────────────────────────────────────────–––..." << endl;
     cerr << "│ ";
     for (auto tok : tokens)
         cerr << "<" << tok << "> ";
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
 
     // Print symbol table 
 #ifdef DEBUG
-    cerr << "╭ Symbol Table: ───────────────────────────────────────────────────────────────╮" << endl;
+    cerr << "╭ Symbol Table ────────────────────────────────────────────────────────────────╮" << endl;
     for (auto [key, value] : symbols) {
         std::string line = key + " -> " + std::to_string(value);
         cerr << "│ " << line;
