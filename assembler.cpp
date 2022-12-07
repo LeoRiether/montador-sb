@@ -88,7 +88,14 @@ void push_code(
             i++;
         } else if (dir == "CONST") {
             assert(i+1 < n && "missing argument for CONST");
-            code.push_back(std::stoi(tokens[i+1]));
+
+            // CONST <label>
+            if (symbols.count(tokens[i+1]))
+                code.push_back(symbol(tokens[i+1]));
+            // CONST <integer>
+            else
+                code.push_back(std::stoi(tokens[i+1]));
+
             i += 2;
         }
 

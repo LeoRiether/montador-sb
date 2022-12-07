@@ -59,7 +59,6 @@ void interpret(vector<uint16_t>& mem) {
         if (ows >= 3) std::cerr << " " << op2;
         std::cerr << std::endl;
 #endif
-
         switch (op) {
             case Add: case Sub: case Mul: case Div: {
                 acc = do_op(acc, op, mem[op1]);
@@ -68,7 +67,6 @@ void interpret(vector<uint16_t>& mem) {
             }
             case Jmp: {
                 pc = op1;
-                pc += 2;
                 break;
             }
             case Jmpn: {

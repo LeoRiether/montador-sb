@@ -1,7 +1,8 @@
 #pragma once
+#include <cassert>
+#include <istream>
 #include <string>
 #include <vector>
-#include <istream>
 
 using Token = std::string;
 using std::vector;
