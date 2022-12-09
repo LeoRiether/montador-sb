@@ -14,9 +14,7 @@ size_t op_word_size(const Token& op) {
     if (is("COPY"))
         return 3;
 
-    // TODO: rething error handling decisions
-    std::cerr << "Invalid op <" << op << ">" << std::endl;
-    assert(false);
+    throw GenericError("Invalid op <" + std::string(op) + ">");
 }
 
 std::unordered_map<Token, uint16_t> opcode_table = {

@@ -1,5 +1,6 @@
 #pragma once
 #include "lexer.hpp"
+#include "errors.hpp"
 
 #include <cassert>
 #include <cstdint>
