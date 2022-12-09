@@ -4,6 +4,16 @@ bool is_whitespace(char c) {
     return c == ' ' || c == '\r' || c == '\n';
 }
 
+Token str_to_uppercase(const Token& s) {
+    int n = s.size();
+    Token r;
+    r.resize(n);
+    for (int i = 0; i < n; i++) {
+        r[i] = toupper(s[i]);
+    }
+    return r;
+}
+
 vector<Token> lex(std::istream& input) {
     vector<Token> tokens;
     Token current;
@@ -11,8 +21,8 @@ vector<Token> lex(std::istream& input) {
 
     auto push_ident = [&]() {
         if (!current.empty()) {
-            tokens.emplace_back(std::move(current));
-            current = "";
+            tokens.emplace_back(str_to_uppercase(current));
+            current.clear();
         }
     };
 
