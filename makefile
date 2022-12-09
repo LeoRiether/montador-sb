@@ -4,18 +4,25 @@ FLAGS := -fsanitize=address,undefined \
 		 -g -DDEBUG \
 		 -Wall -Wextra
 
-run: montador
-	./montador exemplo.asm exemplo.o
+EXEC = montador
+IEXEC = interpreter
+ifeq ($(OS),Windows_NT)
+	EXEC := montador.exe
+	IEXEC := interpreter.exe
+endif
 
-montador: main.cpp lexer.cpp assembler.cpp *.hpp
-	g++ main.cpp lexer.cpp assembler.cpp \
-		-o montador \
+run: $(EXEC)
+	./$(EXEC) exemplo.asm exemplo.o
+
+$(EXEC): main.cpp lexer.cpp montador.cpp *.hpp
+	g++ main.cpp lexer.cpp montador.cpp \
+		-o $(EXEC) \
 		$(FLAGS)
 
-interpret: interpreter run
-	./interpreter exemplo.o
+interpret: $(IEXEC) run
+	./$(IEXEC) exemplo.o
 
-interpreter: interpreter.cpp
+$(IEXEC): interpreter.cpp
 	g++ interpreter.cpp \
-		-o interpreter \
+		-o $(IEXEC) \
 		$(FLAGS)
