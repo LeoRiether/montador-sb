@@ -1,7 +1,7 @@
 #include "lexer.hpp"
 
 bool is_whitespace(char c) {
-    return c == ' ' || c == '\r' || c == '\n' || c == ',';
+    return c == ' ' || c == '\r' || c == '\n';
 }
 
 vector<Token> lex(std::istream& input) {
@@ -25,7 +25,7 @@ vector<Token> lex(std::istream& input) {
         case Idle:
             if (c == ';') st = Comment;
             else if (is_whitespace(c)) { }
-            else if (c == ':') { assert(false && "':' without label identifier"); }
+            else if (c == ':') { throw "':' without label identifier"; }
             else {
                 // Start of an ident
                 current = c;
