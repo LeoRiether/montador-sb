@@ -14,7 +14,7 @@ size_t op_word_size(const Token& op) {
     if (is("COPY"))
         return 3;
 
-    throw GenericError("Invalid op <" + std::string(op) + ">");
+    throw AssemblerError("Assembler" ,"Invalid op <" + std::string(op) + ">", 0, 0);
 }
 
 std::unordered_map<Token, uint16_t> opcode_table = {
@@ -72,7 +72,7 @@ void push_code(
 
     auto symbol = [&](const Token& key) {
         const auto entry = symbols.find(key);
-        assert(entry != symbols.end() && "Symbol not found");
+        if (entry == symbols.end()) throw AssemblerError("Assembler", "Symbol not found: " + std::string(key), 0, 0);
         return entry->second;
     };
 
