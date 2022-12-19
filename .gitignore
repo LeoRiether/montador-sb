@@ -1,3 +1,8 @@
-montador
-interpreter
-*.o
+MONTADOR
+bin/
+dep/
+
+compile_commands.json
+
+.cache
+.vscode
