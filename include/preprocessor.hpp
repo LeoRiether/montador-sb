@@ -2,10 +2,5 @@
 
 #include <lexer.hpp>
 
-class Preprocessor {
-private:
-
-public:
-    Preprocessor();
-};
-
+vector<Token> preprocess_equs_ifs(const vector<Token>& tokens);
+vector<Token> preprocess_macros(const vector<Token>& tokens);

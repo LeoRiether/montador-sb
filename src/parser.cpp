@@ -1,5 +1,6 @@
 #include <parser.hpp>
 
-Parser::Parser() {
-
+vector<Line> parse(const vector<Token>& tokens) {
+    // TODO:
+    return {};
 }
