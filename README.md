@@ -1,5 +1,5 @@
 # Montador
-Brought to you by @LeoRiether and @Tiagosf00
+Brought to you by [@LeoRiether](https://github.com/LeoRiether) and [@Tiagosf00](https://github.com/Tiagosf00)
 
 ## Estrutura do Projeto
 - Os arquivos fonte estão em `src/`, os headers, no `include/`, e por fim os testes, em `tests/`
