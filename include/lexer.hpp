@@ -6,8 +6,8 @@
 #include <optional>
 
 using std::string;
-using std::optional;
 using std::vector;
+using std::optional;
 
 struct Token : string {
     int line, column;
@@ -15,17 +15,31 @@ struct Token : string {
     Token(int l, int c, const string& _s = "")
         : string(_s), line(l), column(c) {}
 
-    void set_position(int l, int c) {
+    inline void set_position(int l, int c) {
         line = l;
         column = c;
     }
 };
 
+bool is_whitespace(char);
+Token str_to_uppercase(const Token& s);
 
 enum LexerState {
     Idle, Ident, Comment
 };
 
-bool is_whitespace(char);
-vector<Token> lex(std::istream&);
+class Lexer {
+private:
+    Token current{ 0, 0 };
+    int line{ 0 }, column{ 0 };
+    LexerState st{ Idle };
+    std::istream& input;
+    vector<Token> buffer;
 
+public:
+
+    Lexer(std::istream& _input);
+
+    optional<Token> next();
+    optional<Token> peek();
+};

@@ -1,22 +1,24 @@
-#pragma once
-#include "lexer.hpp"
-#include "errors.hpp"
+// #pragma once
+// #include "lexer.hpp"
+// #include "errors.hpp"
 
-#include <cassert>
-#include <cstdint>
-#include <iostream>
-#include <unordered_map>
-#include <unordered_set>
+// // DEPRECATED I think
 
-using SymbolTable = std::unordered_map<Token, uint16_t>;
+// #include <cassert>
+// #include <cstdint>
+// #include <iostream>
+// #include <unordered_map>
+// #include <unordered_set>
 
-size_t op_word_size(const Token& op);
+// using SymbolTable = std::unordered_map<Token, uint16_t>;
 
-SymbolTable build_symbol_table(const vector<Token>& tokens);
+// size_t op_word_size(const Token& op);
 
-void push_code(
-    vector<uint16_t>& code, const vector<Token>& tokens,
-    size_t& i, SymbolTable& symbols
-);
+// SymbolTable build_symbol_table(const vector<Token>& tokens);
 
-vector<uint16_t> assemble(const vector<Token>& tokens, const SymbolTable& symbols);
+// void push_code(
+//     vector<uint16_t>& code, const vector<Token>& tokens,
+//     size_t& i, SymbolTable& symbols
+// );
+
+// vector<uint16_t> assemble(const vector<Token>& tokens, const SymbolTable& symbols);

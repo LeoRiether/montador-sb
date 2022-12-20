@@ -14,89 +14,79 @@ Token str_to_uppercase(const Token& s) {
     return r;
 }
 
-struct Lexer {
-private:
-    Token current{ 0, 0 };
-    int line{ 0 }, column{ 0 };
-    LexerState st{ Idle };
-    std::istream& input;
-    vector<Token> buffer;
+Lexer::Lexer(std::istream& _input) : input(_input) {}
 
-public:
+optional<Token> Lexer::next() {
+    return {};
+    // auto push_ident = [&]() {
+    //     if (!current.empty()) {
+    //         buffer.emplace_back(str_to_uppercase(current));
+    //         current.clear();
+    //     }
+    // };
 
-    Lexer(std::istream& _input)
-        : input(_input) {}
+    // for (;;) {
+    //     if (!buffer.empty()) {
+    //         auto tok = buffer.back();
+    //         buffer.pop_back();
+    //         return tok;
+    //     }
 
-    optional<Token> next() {
-        auto push_ident = [&]() {
-            if (!current.empty()) {
-                buffer.emplace_back(str_to_uppercase(current));
-                current.clear();
-            }
-        };
+    //     char c = input.get();
+    //     if (input.eof()) {
+    //         // input.eof() só é verdadeiro
+    //         // depois que o .get() falha
+    //         push_ident();
+    //         if (buffer.empty()) return {};
+    //         else continue;
+    //     } 
 
-        for (;;) {
-            if (!buffer.empty()) {
-                auto tok = buffer.back();
-                buffer.pop_back();
-                return tok;
-            }
+    //     switch (st) {
+    //     case Idle:
+    //         if (c == ';') st = Comment;
+    //         else if (is_whitespace(c)) { }
+    //         else if (c == ':') { throw "':' without label identifier"; }
+    //         else {
+    //             // Start of an ident
+    //             current = Token{ line, column, std::string{ c } };
+    //             st = Ident;
+    //         }
+    //         break;
 
-            char c = input.get();
-            if (input.eof()) {
-                // input.eof() só é verdadeiro
-                // depois que o .get() falha
-                push_ident();
-                if (buffer.empty()) return {};
-                else continue;
-            } 
+    //     case Ident:
+    //         if (c == ';') {
+    //             push_ident();
+    //             st = Comment;
+    //         } else if (is_whitespace(c)) {
+    //             push_ident();
+    //             st = Idle;
+    //         } else if (c == ':') {
+    //             push_ident();
+    //             buffer.emplace_back(Token{ line, column, std::string{ ":" } });
+    //             st = Idle;
+    //         } else {
+    //             current.push_back(c);
+    //         }
+    //         break;
 
-            switch (st) {
-            case Idle:
-                if (c == ';') st = Comment;
-                else if (is_whitespace(c)) { }
-                else if (c == ':') { throw "':' without label identifier"; }
-                else {
-                    // Start of an ident
-                    current = Token{ line, column, std::string{ c } };
-                    st = Ident;
-                }
-                break;
+    //     case Comment:
+    //         if (c == '\n') st = Idle;
+    //         break;
+    //     };
 
-            case Ident:
-                if (c == ';') {
-                    push_ident();
-                    st = Comment;
-                } else if (is_whitespace(c)) {
-                    push_ident();
-                    st = Idle;
-                } else if (c == ':') {
-                    push_ident();
-                    buffer.emplace_back(Token{ line, column, std::string{ ":" } });
-                    st = Idle;
-                } else {
-                    current.push_back(c);
-                }
-                break;
+    //     // Update current position
+    //     if (c == '\n') {
+    //         line++;
+    //         column = 0;
+    //     } else {
+    //         column++;
+    //     }
+    // }
+}
 
-            case Comment:
-                if (c == '\n') st = Idle;
-                break;
-            };
-
-            // Update current position
-            if (c == '\n') {
-                line++;
-                column = 0;
-            } else {
-                column++;
-            }
-        }
-    }
-
-    optional<Token> peek() {
-        auto tok = next();
-        if (tok) buffer.emplace_back(tok);
-        return tok;
-    }
-};
+optional<Token> Lexer::peek() {
+    return {};
+    // auto tok = next();
+    // if (tok) buffer.emplace_back(tok);
+    // return tok;
+}
