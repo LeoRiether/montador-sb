@@ -36,14 +36,13 @@ DEP_PATH = dep
 
 ##### File list by type
 CPP_FILES = $(wildcard $(SRC_PATH)/*.cpp)
-INC_FILES = $(wildcard $(INC_PATH)/*.h)
-FILE_NAMES = $(sort $(notdir $(CPP_FILES:.cpp=)) $(notdir $(INC_FILES:.h=)))
+INC_FILES = $(wildcard $(INC_PATH)/*.hpp)
+FILE_NAMES = $(sort $(notdir $(CPP_FILES:.cpp=)) $(notdir $(INC_FILES:.hpp=)))
 DEP_FILES = $(addprefix $(DEP_PATH)/,$(addsuffix .d,$(FILE_NAMES)))
 OBJ_FILES = $(addprefix $(BIN_PATH)/,$(notdir $(CPP_FILES:.cpp=.o)))
 
 ##### Executable name
 EXEC = MONTADOR
-TEST_EXEC = test_bin
 
 ###################################
 ##### Windows Makefile
@@ -58,7 +57,6 @@ RM = del /q
 
 ##### Executable name
 EXEC := $(EXEC).exe
-TEST_EXEC := $(TEST_EXEC).exe
 endif
 
 #################################
@@ -85,7 +83,6 @@ clean:
 	-$(RMDIR) $(DEP_PATH)
 	-$(RMDIR) $(BIN_PATH)
 	-$(RM) $(EXEC)
-	-$(RM) $(TEST_EXEC)
 
 ##### Call for cppcheck
 cppcheck:
@@ -103,12 +100,6 @@ debug: $(EXEC)
 
 bear:
 	bear -- make
-
-$(TEST_EXEC): tests/main.cpp
-	$(COMPILER) -o $(TEST_EXEC) $(LIBS) $(FLAGS) $(DFLAGS) tests/main.cpp
-
-test: $(TEST_EXEC)
-	./$(TEST_EXEC)
 
 folders:
 ifeq ($(OS), Windows_NT)
