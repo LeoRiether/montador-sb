@@ -1,6 +1,7 @@
 MONTADOR
 bin/
 dep/
+build/
 
 compile_commands.json
 
