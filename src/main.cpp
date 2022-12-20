@@ -25,14 +25,12 @@ int main(int argc, char* argv[]) {
         auto tokens = lex(file);
 
         // Print tokens
-#ifdef DEBUG
         cerr << "╭ Tokens ─────────────────────────────────────────────────────────────────–––..." << endl;
         cerr << "│ ";
         for (auto tok : tokens)
             cerr << "<" << tok << "> ";
         cerr << endl;
         cerr << "╰─────────────────────────────────────────────────────────────────────────–––..." << endl;
-#endif
 
         tokens = preprocess_equs_ifs(tokens);
         tokens = preprocess_macros(tokens);
@@ -42,7 +40,6 @@ int main(int argc, char* argv[]) {
         auto symbols = build_symbol_table(lines);
 
         // Print symbol table 
-#ifdef DEBUG
         cerr << "╭ Symbol Table ────────────────────────────────────────────────────────────────╮" << endl;
         for (auto [key, value] : symbols) {
             std::string line = key + " -> " + std::to_string(value);
@@ -52,7 +49,6 @@ int main(int argc, char* argv[]) {
             cerr << "│" << endl;
         }
         cerr << "╰──────────────────────────────────────────────────────────────────────────────╯" << endl;
-#endif
 
         // Assemble program...
         auto code = generate_machine_code(lines, symbols);
