@@ -27,6 +27,11 @@ vector<Token> lex(std::istream& input) {
         }
     };
 
+    auto push_nl = [&]() {
+        if (!tokens.empty() && tokens.back() != "\n")
+            tokens.emplace_back(line, column, std::string{ "\n" });
+    };
+
     for (;;) {
         char c = input.get();
         if (input.eof()) {
@@ -39,7 +44,7 @@ vector<Token> lex(std::istream& input) {
         case Idle:
             if (c == ';') st = Comment;
             else if (is_whitespace(c)) {}
-            else if (c == '\n') {}
+            else if (c == '\n') { push_nl(); }
             else if (c == ':') { throw "':' without label identifier"; }
             else {
                 // Start of an ident
@@ -53,7 +58,7 @@ vector<Token> lex(std::istream& input) {
         case Ident:
             if (c == '\n') {
                 push_ident();
-                tokens.emplace_back(line, column, std::string{ "\n" });
+                push_nl();
                 st = Idle;
             } else if (c == ';') {
                 push_ident();
@@ -72,7 +77,7 @@ vector<Token> lex(std::istream& input) {
 
         case Comment:
             if (c == '\n') {
-                tokens.emplace_back(line, column, std::string{ "\n" });
+                push_nl();
                 st = Idle;
             }
             break;
@@ -88,6 +93,7 @@ vector<Token> lex(std::istream& input) {
     }
 
     push_ident();
+    push_nl(); // tokens always end in newline, except when tokens.empty()
     return tokens;
 }
 
