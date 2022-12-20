@@ -7,7 +7,6 @@
 
 using std::string;
 using std::vector;
-using std::optional;
 
 struct Token : string {
     int line, column;
@@ -28,18 +27,4 @@ enum LexerState {
     Idle, Ident, Comment
 };
 
-class Lexer {
-private:
-    Token current{ 0, 0 };
-    int line{ 0 }, column{ 0 };
-    LexerState st{ Idle };
-    std::istream& input;
-    vector<Token> buffer;
-
-public:
-
-    Lexer(std::istream& _input);
-
-    optional<Token> next();
-    optional<Token> peek();
-};
+vector<Token> lex(std::istream& input);
