@@ -43,6 +43,7 @@ OBJ_FILES = $(addprefix $(BIN_PATH)/,$(notdir $(CPP_FILES:.cpp=.o)))
 
 ##### Executable name
 EXEC = MONTADOR
+TEST_EXEC = test_bin
 
 ###################################
 ##### Windows Makefile
@@ -57,12 +58,13 @@ RM = del /q
 
 ##### Executable name
 EXEC := $(EXEC).exe
+TEST_EXEC := $(TEST_EXEC).exe
 endif
 
 #################################
 
 .PRECIOUS: $(DEP_FILES)
-.PHONY: release debug cppcheck valgrind clean folders help bear
+.PHONY: release debug cppcheck valgrind clean folders help test bear
 
 ##### General rule
 all: $(EXEC)
@@ -83,6 +85,7 @@ clean:
 	-$(RMDIR) $(DEP_PATH)
 	-$(RMDIR) $(BIN_PATH)
 	-$(RM) $(EXEC)
+	-$(RM) $(TEST_EXEC)
 
 ##### Call for cppcheck
 cppcheck:
@@ -100,6 +103,12 @@ debug: $(EXEC)
 
 bear:
 	bear -- make
+
+$(TEST_EXEC): tests/main.cpp
+	$(COMPILER) -o $(TEST_EXEC) $(LIBS) $(FLAGS) $(DFLAGS) tests/main.cpp
+
+test: $(TEST_EXEC)
+	./$(TEST_EXEC)
 
 folders:
 ifeq ($(OS), Windows_NT)

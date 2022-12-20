@@ -58,8 +58,7 @@ public:
                 else if (c == ':') { throw "':' without label identifier"; }
                 else {
                     // Start of an ident
-                    current = c;
-                    current.set_position(line, column);
+                    current = Token{ line, column, std::string{ c } };
                     st = Ident;
                 }
                 break;
@@ -73,7 +72,7 @@ public:
                     st = Idle;
                 } else if (c == ':') {
                     push_ident();
-                    tokens.emplace_back(":");
+                    buffer.emplace_back(Token{ line, column, std::string{ ":" } });
                     st = Idle;
                 } else {
                     current.push_back(c);
