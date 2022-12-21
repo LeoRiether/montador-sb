@@ -2,7 +2,6 @@
 #include <lexer.hpp>
 #include <sstream>
 
-
 bool operator==(const vector<Token>& a, const vector<string>& b) {
     if (a.size() != b.size())
         return false;
