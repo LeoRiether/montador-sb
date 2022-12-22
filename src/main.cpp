@@ -53,6 +53,14 @@ int main(int argc, char* argv[]) {
         // Assemble program...
         auto code = generate_machine_code(lines, symbols);
 
+        // Print machine code
+        cerr << "╭ Machine Code ───────────────────────────────────────────────────────────–––..." << endl;
+        cerr << "│ ";
+        for (auto x : code)
+            cerr << "<" << x << "> ";
+        cerr << endl;
+        cerr << "╰─────────────────────────────────────────────────────────────────────────–––..." << endl;
+
         // ...and write it to the output file
         std::ofstream output(argv[2], std::ios::out);
         bool first = true;

@@ -4,6 +4,7 @@
 #include <lexer.hpp>
 #include <optional>
 #include <string>
+#include <ostream>
 
 using std::string;
 using std::optional;
@@ -20,6 +21,7 @@ struct Line {
 
     bool operator==(const Line& rhs) const;
     string to_string() const;
+    friend std::ostream& operator<<(std::ostream& os, const Line& line);
 };
 
 bool valid_identifier(const string& s);

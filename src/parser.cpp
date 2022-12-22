@@ -19,6 +19,10 @@ string Line::to_string() const {
     return "???";
 }
 
+std::ostream& operator<<(std::ostream& os, const Line& line) {
+    return os << line.to_string();
+} 
+
 // TODO: revise the valid_identifier rules!
 bool valid_identifier(const string& s) {
     if (s.empty()) return false;

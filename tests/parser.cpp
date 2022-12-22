@@ -13,6 +13,7 @@ Token t(const char* s) {
 TEST_CASE("Parser tests", "[parser]") {
     SECTION("Basic parser functionality") {
         stringstream input{
+            "SECTION TEXT  \n"
             "LOOP: LOAD X  \n"
             "A:    ADD Y   \n"
             "      STORE X \n"
@@ -20,6 +21,7 @@ TEST_CASE("Parser tests", "[parser]") {
             "      JMP LOOP\n"};
 
         vector<Line> expected {
+            Line{Line::IsSection,     {t("TEXT")}},
             Line{Line::IsLabel,       {t("LOOP")}},
             Line{Line::IsInstruction, {t("LOAD"),  t("X")}},
             Line{Line::IsLabel,       {t("A")}},
@@ -29,8 +31,12 @@ TEST_CASE("Parser tests", "[parser]") {
             Line{Line::IsInstruction, {t("JMP"),   t("LOOP")}},
         };
 
-        auto output = parse(lex(input));
-        REQUIRE(output == expected);
+        REQUIRE(parse(lex(input)) == expected);
+    }
+
+    SECTION("Weird instructions that don't exist") {
+        stringstream input { "MULT X\n" };
+        REQUIRE_THROWS(parse(lex(input)));
     }
 
     SECTION("Wrong number of arguments throws") {
