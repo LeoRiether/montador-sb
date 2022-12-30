@@ -13,11 +13,11 @@ using std::vector;
 // Not really relevant to the implementation of the assembler
 struct Box {
     string header;
-    int maxwidth;
+    int minwidth, maxwidth;
     vector<string> buffer{""};
 
-    Box(const string& _header, int _maxwidth = 80)
-        : header(_header), maxwidth(_maxwidth) {
+    Box(const string& _header, int _minwidth = 40, int _maxwidth = 80)
+        : header(_header), minwidth(_minwidth), maxwidth(_maxwidth) {
     }
 
     Box& operator<<(const string& s) {
@@ -25,7 +25,7 @@ struct Box {
             if (c == '\n')
                 buffer.emplace_back();
             else if (buffer.back().size() >= maxwidth - 4)
-                buffer.emplace_back(std::string{ c });
+                buffer.emplace_back(std::string{c});
             else
                 buffer.back().push_back(c);
         }
@@ -34,9 +34,9 @@ struct Box {
 };
 
 inline ostream& operator<<(ostream& os, Box& box) {
-    size_t width = box.header.size() + 4;
+    int width = std::max<int>(box.minwidth, box.header.size() + 4);
     for (const auto& line : box.buffer)
-        width = std::max(width, line.size() + 4);
+        width = std::max<int>(width, line.size() + 4);
 
     auto repeat = [&](const char* s, int n) {
         for (int i = 0; i < n; i++)
