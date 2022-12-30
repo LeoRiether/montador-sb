@@ -1,3 +1,4 @@
+#include <box.hpp>
 #include <codegen.hpp>
 #include <cstring>
 #include <errors.hpp>
@@ -25,12 +26,12 @@ int main(int argc, char *argv[]) {
                 "Leonardo Riether <riether.leonardo@gmail.com> e "
                 "Tiago Fernandes <tiagotsf2000@gmail.com>\n"
                 "\n"
-                "    Modo de uso: MONTADOR <op> <arquivo>\n"
-                "        <op>:\n"
-                "            -p: preprocessamento de EQUs e IFs\n"
-                "            -m: preprocessamento até MACROs\n"
-                "            -o: gera o arquivo objeto\n"
-
+                "Modo de uso: MONTADOR <op> <arquivo>\n"
+                "    <op>:\n"
+                "        -p: preprocessamento de EQUs e IFs\n"
+                "        -m: preprocessamento até MACROs\n"
+                "        -o: gera o arquivo objeto\n"
+                "    <arquivo>: Nome do arquivo .ASM, sem a extensão\n"
              << endl;
         return 1;
     }
@@ -41,26 +42,25 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    try {
-        std::ifstream file(argv[2] + std::string(".ASM"));
-        std::ofstream output(argv[2] + ext);
+    std::ifstream file(argv[2] + std::string(".ASM"));
+    std::ofstream output(argv[2] + ext);
 
+    if (!file.is_open()) {
+        cerr << "Não foi possível abrir o arquivo <" << argv[2] << ".ASM"
+             << ">" << endl;
+        return 1;
+    }
+
+    try {
         auto tokens = lex(file);
 
         // Print tokens
-        cerr << "╭ Tokens "
-                "──────────────────────────────────────────────────────────────"
-                "───–"
-                "––..."
-             << endl;
-        cerr << "│ ";
-        for (auto tok : tokens)
-            cerr << "<" << tok << "> ";
-        cerr << endl;
-        cerr << "╰─────────────────────────────────────────────────────────────"
-                "────"
-                "────────–––..."
-             << endl;
+        {
+            Box box{"Tokens"};
+            for (const auto& tok : tokens)
+                box << "<" << tok << "> ";
+            cerr << box << endl;
+        }
 
         // Preprocess EQUs and IFs
         tokens = preprocess_equs_ifs(tokens);
@@ -81,60 +81,33 @@ int main(int argc, char *argv[]) {
         auto lines = parse(tokens);
 
         // Print lines
-        cerr << "╭ Lines "
-                "──────────────────────────────────────────────────────────────"
-                "────"
-                "─────╮"
-             << endl;
-        for (auto x : lines) {
-            std::string line = x.to_string();
-            cerr << "│ " << line;
-            int padding = 77 - line.size();
-            while (padding--)
-                cerr << ' ';
-            cerr << "│" << endl;
+        {
+            Box box{"Lines"};
+            for (const auto& line : lines)
+                box << line.to_string() << "\n";
+            cerr << box << endl;
         }
-        cerr << "╰─────────────────────────────────────────────────────────────"
-                "────"
-                "─────────────╯"
-             << endl;
 
         auto symbols = build_symbol_table(lines);
 
         // Print symbol table
-        cerr << "╭ Symbol Table "
-                "──────────────────────────────────────────────────────────────"
-                "──╮"
-             << endl;
-        for (auto [key, value] : symbols) {
-            std::string line = key + " -> " + std::to_string(value);
-            cerr << "│ " << line;
-            int padding = 77 - line.size();
-            while (padding--)
-                cerr << ' ';
-            cerr << "│" << endl;
+        {
+            Box box{"Symbol Table"};
+            for (const auto& [key, value] : symbols)
+                box << key << " -> " << std::to_string(value) << "\n";
+            cerr << box << endl;
         }
-        cerr << "╰─────────────────────────────────────────────────────────────"
-                "────"
-                "─────────────╯"
-             << endl;
 
         // Assemble program...
         auto code = generate_machine_code(lines, symbols);
 
         // Print machine code
-        cerr << "╭ Machine Code "
-                "───────────────────────────────────────────────────────────–––"
-                "..."
-             << endl;
-        cerr << "│ ";
-        for (auto x : code)
-            cerr << x << ' ';
-        cerr << endl;
-        cerr << "╰─────────────────────────────────────────────────────────────"
-                "────"
-                "────────–––..."
-             << endl;
+        {
+            Box box{"Machine Code"};
+            for (auto x : code)
+                box << std::to_string(x) << " ";
+            cerr << box << endl;
+        }
 
         // ...and write it to the output file
         bool first = true;
