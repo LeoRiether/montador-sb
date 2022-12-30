@@ -97,3 +97,14 @@ vector<Token> lex(std::istream& input) {
     return tokens;
 }
 
+std::ostream& operator<<(std::ostream& os, const vector<Token>& tokens) {
+    size_t n = tokens.size();
+    for (size_t i = 0; i < n; i++) {
+        const auto& token = tokens[i];
+        os << token;
+        if (i + 1 < n && token != "\n" && tokens[i + 1] != "\n" &&
+            tokens[i + 1] != ":")
+            os << ' ';
+    }
+    return os;
+}

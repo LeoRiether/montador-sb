@@ -28,3 +28,5 @@ enum LexerState {
 };
 
 vector<Token> lex(std::istream& input);
+
+std::ostream& operator<<(std::ostream& os, const vector<Token>& tokens);
