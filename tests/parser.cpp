@@ -7,8 +7,8 @@
 using std::stringstream;
 
 Token t(const char* s) {
-    return Token{ 0, 0, s };
-}  
+    return Token{0, 0, s};
+}
 
 TEST_CASE("Parser tests", "[parser]") {
     SECTION("Basic parser functionality") {

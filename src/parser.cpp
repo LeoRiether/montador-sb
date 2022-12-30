@@ -12,8 +12,10 @@ bool Line::operator==(const Line& rhs) const {
 
 string Line::to_string() const {
     if (which == IsLabel) return data[0] + ":";
-    if (which == IsInstruction || which == IsDirective)
+    if (which == IsInstruction)
         return data[0] + " " + data[1] + " " + data[2];
+    if (which == IsDirective)
+        return data[0] + " " + std::to_string(num);
     if (which == IsSection)
         return "SECTION " + data[0];
     return "???";
