@@ -34,6 +34,10 @@ struct Box {
 };
 
 inline ostream& operator<<(ostream& os, Box& box) {
+    // Trim trailing blank lines
+    while (box.buffer.size() >= 2 && box.buffer.back().empty())
+        box.buffer.pop_back();
+
     int width = std::max<int>(box.minwidth, box.header.size() + 4);
     for (const auto& line : box.buffer)
         width = std::max<int>(width, line.size() + 4);
