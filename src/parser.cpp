@@ -1,17 +1,20 @@
 #include <parser.hpp>
 
 bool Line::operator==(const Line& rhs) const {
-    if (which != rhs.which) return false;
+    if (which != rhs.which)
+        return false;
 
     for (size_t i = 0; i < 3; i++) {
-        if (data[i] != rhs.data[i]) return false;
+        if (data[i] != rhs.data[i])
+            return false;
     }
 
     return true;
 }
 
 string Line::to_string() const {
-    if (which == IsLabel) return data[0] + ":";
+    if (which == IsLabel)
+        return data[0] + ":";
     if (which == IsInstruction)
         return data[0] + " " + data[1] + " " + data[2];
     if (which == IsDirective)
@@ -23,16 +26,19 @@ string Line::to_string() const {
 
 std::ostream& operator<<(std::ostream& os, const Line& line) {
     return os << line.to_string();
-} 
+}
 
 // TODO: revise the valid_identifier rules!
 bool valid_identifier(const string& s) {
-    if (s.empty()) return false;
-    if (s[0] >= '0' && s[0] <= '9') return false;
+    if (s.empty())
+        return false;
+    if (s[0] >= '0' && s[0] <= '9')
+        return false;
     for (char c : s) {
         bool character = c >= 'A' && c <= 'Z';
         bool digit = c >= '0' && c <= '9';
-        if (!character && !digit) return false;
+        if (!character && !digit)
+            return false;
     }
     return true;
 }
@@ -43,7 +49,8 @@ bool valid_identifier(const string& s) {
 // e retorna nullopt caso o formato seja inválido,
 // ou o int16_t correspondente.
 optional<int16_t> parse_number(string s) {
-    if (s.empty()) return {};
+    if (s.empty())
+        return {};
 
     int16_t ans = 0;
     bool neg = false;
@@ -81,7 +88,8 @@ optional<int16_t> parse_number(string s) {
 }
 
 vector<Line> parse(const vector<Token>& tokens) {
-    if (tokens.empty()) return {};
+    if (tokens.empty())
+        return {};
 
     vector<Line> lines;
     size_t n = tokens.size();
