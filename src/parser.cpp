@@ -29,6 +29,8 @@ std::ostream& operator<<(std::ostream& os, const Line& line) {
 }
 
 // TODO: revise the valid_identifier rules!
+// TODO: in hindsight, o erro dado quando o identificador não é válido é léxico,
+// e de fato o lexer poderia detectar o erro 
 bool valid_identifier(const string& s) {
     if (s.empty())
         return false;

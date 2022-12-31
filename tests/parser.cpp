@@ -143,5 +143,13 @@ TEST_CASE("Parser tests", "[parser]") {
             REQUIRE_THROWS(parse(lex(input)));
         }
     }
+
+    SECTION("Two labels on the same line should throw") {
+        stringstream input{"A: LOAD A"};
+        REQUIRE_NOTHROW(parse(lex(input)));
+
+        input = stringstream{"A: B: LOAD A"};
+        REQUIRE_THROWS(parse(lex(input)));
+    }
 }
 

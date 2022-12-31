@@ -1,4 +1,5 @@
-#include "lexer.hpp"
+#include <lexer.hpp>
+#include <errors.hpp>
 
 bool is_whitespace(char c) {
     return c == ' ' || c == '\t' || c == '\r';
@@ -42,15 +43,19 @@ vector<Token> lex(std::istream& input) {
 
         switch (st) {
         case Idle:
-            if (c == ';') st = Comment;
-            else if (is_whitespace(c)) {}
-            else if (c == '\n') { push_nl(); }
-            else if (c == ':') { throw "':' without label identifier"; }
-            else {
+            if (c == ';') {
+                st = Comment;
+            } else if (is_whitespace(c)) {
+            } else if (c == '\n') {
+                push_nl();
+            } else if (c == ':') {
+                throw AssemblerError("Lexer", "':' sem identificador de label",
+                                     line, column);
+            } else {
                 // Start of an ident
                 // TODO: Idents shouldn't begin with a digit (maybe there are
                 // more specified rules about variable naming...)
-                current = Token{ line, column, std::string{ c } };
+                current = Token{line, column, std::string{c}};
                 st = Ident;
             }
             break;
