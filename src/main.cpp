@@ -10,7 +10,7 @@
 using std::cerr;
 using std::endl;
 
-std::string file_ext(const char *op) {
+std::string file_ext(const char* op) {
     if (strcmp(op, "-p") == 0)
         return ".PRE";
     if (strcmp(op, "-m") == 0)
@@ -20,7 +20,7 @@ std::string file_ext(const char *op) {
     return "?";
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char* argv[]) {
     if (argc < 3) {
         cerr << "MONTADOR v1.0\n"
                 "Leonardo Riether <riether.leonardo@gmail.com> e "
@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
         output << '\n';
         output.close();
 
-    } catch (AssemblerError &e) {
+    } catch (AssemblerError& e) {
         std::cerr << e.what() << std::endl;
         return 1;
     }
