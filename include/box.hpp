@@ -24,7 +24,7 @@ struct Box {
         for (char c : s) {
             if (c == '\n')
                 buffer.emplace_back();
-            else if (buffer.back().size() >= maxwidth - 4)
+            else if ((int)buffer.back().size() >= maxwidth - 4)
                 buffer.emplace_back(std::string{c});
             else
                 buffer.back().push_back(c);

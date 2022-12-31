@@ -23,7 +23,7 @@ LIBS = -lm
 INC_PATHS = -I$(INC_PATH) $(addprefix -I,$(SDL_INC_PATH))
 
 ##### Compile directives
-FLAGS = -std=c++17 -Wall -pedantic -Wextra -Werror=init-self -fsanitize=address,undefined
+FLAGS = -std=c++17 -Wall -Wextra -Werror=init-self
 ##### Extra debugging directives
 DFLAGS = -ggdb -O0 -DDEBUG
 ##### Extra release directives

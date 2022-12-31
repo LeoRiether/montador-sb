@@ -11,6 +11,7 @@ include_directories(include)
 file(GLOB SOURCES "src/*.cpp")
 
 # Add main executable
+add_compile_options(-Wall -Wextra -Werror=init-self)
 add_executable(MONTADOR ${SOURCES})
 
 # We're using Catch2 as a testing library
