@@ -102,6 +102,12 @@ vector<Line> parse(const vector<Token>& tokens) {
 
         // Parse a label
         else if (i + 1 < n && tokens[i + 1] == ":") {
+            // malformed token
+            if (!valid_identifier(tokens[i]))
+                throw AssemblerError(
+                    "Parser", "Token inesperado <" + tokens[i] + ">",
+                    tokens[i].line, tokens[i].column);
+
             Line line{Line::IsLabel, {tokens[i]}};
             i += 2;
 
