@@ -67,7 +67,8 @@ TEST_CASE("Parser tests", "[parser]") {
         }
         {
             stringstream input{"CONST -12345"};
-            vector<Line> expected{Line{Line::IsDirective, {t("CONST")}, -12345}};
+            vector<Line> expected{
+                Line{Line::IsDirective, {t("CONST")}, -12345}};
             REQUIRE(parse(lex(input)) == expected);
         }
         {
@@ -87,7 +88,8 @@ TEST_CASE("Parser tests", "[parser]") {
         }
         {
             stringstream input{"SPACE -0xAbc"};
-            vector<Line> expected{Line{Line::IsDirective, {t("SPACE")}, -0xABC}};
+            vector<Line> expected{
+                Line{Line::IsDirective, {t("SPACE")}, -0xABC}};
             REQUIRE(parse(lex(input)) == expected);
         }
     }
@@ -121,5 +123,15 @@ TEST_CASE("Parser tests", "[parser]") {
 
         input = stringstream{"A: B: LOAD A"};
         REQUIRE_THROWS(parse(lex(input)));
+    }
+}
+
+TEST_CASE("Parser Segfaults", "[parser][segv]") {
+    SECTION("This used to segfault sometimes") {
+        {
+            stringstream input{"SUB"};
+            auto tokens = lex(input);
+            REQUIRE_THROWS(parse(tokens));
+        }
     }
 }

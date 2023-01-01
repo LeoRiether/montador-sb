@@ -120,3 +120,4 @@ TEST_CASE("Lexer tests", "[lexer]") {
         }
     }
 }
+

@@ -28,8 +28,14 @@ std::ostream& operator<<(std::ostream& os, const Line& line) {
     return os << line.to_string();
 }
 
-// TODO: talvez dê overflow pra positivos com 16 bits
-// TODO: talvez esteja errado pra negativos ainda
+// We only need to validate the first character, as the rest of the
+// validation is done by the lexer
+bool is_identifier(const Token& tok) {
+    return !tok.empty() && (isalpha(tok[0]) || tok[0] == '_');
+}
+
+// WARN: talvez dê overflow pra positivos com 16 bits
+// WARN: talvez esteja errado pra negativos ainda
 // Faz o parsing de um número em `s`
 // e retorna nullopt caso o formato seja inválido,
 // ou o int16_t correspondente.
@@ -113,18 +119,12 @@ vector<Line> parse(const vector<Token>& tokens) {
             // Verificação dos argumentos da instrução
             for (size_t j = 1; j < instr.size; j++) {
                 // Verificamos se o token i+j é válido
-                if (i + j >= n)
+                if (i + j >= n || !is_identifier(tokens[i + 1]))
                     throw AssemblerError(
                         "Sintático",
                         "Argumento faltando para a instrução <" + tokens[i] +
                             ">",
                         tokens[i].line, tokens[j].column);
-                else if (parse_number(tokens[i]))
-                    throw AssemblerError("Sintático",
-                                         "Número encontrado, mas era esperado "
-                                         "um identificador em <" +
-                                             tokens[i] + ">",
-                                         tokens[i].line, tokens[i].column);
 
                 // Token válido! Add à linha
                 line.data[j] = tokens[i + j];
@@ -171,7 +171,8 @@ vector<Line> parse(const vector<Token>& tokens) {
                 i++;
             } else {
                 throw AssemblerError(
-                    "Sintático", "Há um argumento faltando para a diretiva CONST",
+                    "Sintático",
+                    "Há um argumento faltando para a diretiva CONST",
                     tokens[i - 1].line, tokens[i - 1].column);
             }
 
@@ -182,7 +183,8 @@ vector<Line> parse(const vector<Token>& tokens) {
         else if (tokens[i] == "SECTION") {
             Line line{Line::IsSection, {Token{}}};
             if (i + 1 >= n || tokens[i + 1] == "\n")
-                throw AssemblerError("Sintático", "Diretiva SECTION sem argumento",
+                throw AssemblerError("Sintático",
+                                     "Diretiva SECTION sem argumento",
                                      tokens[i].line, tokens[i].column);
             if (tokens[i + 1] != "TEXT" && tokens[i + 1] != "DATA")
                 throw AssemblerError(

@@ -24,6 +24,7 @@ struct Line {
     friend std::ostream& operator<<(std::ostream& os, const Line& line);
 };
 
+bool is_identifier(const Token& tok);
 optional<int16_t> parse_number(string s);
 
 vector<Line> parse(const vector<Token>& tokens);
