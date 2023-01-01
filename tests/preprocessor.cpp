@@ -7,26 +7,50 @@ using std::stringstream;
 
 #define SKIP_SECTION(...) if (false)
 
-TEST_CASE("Stage 1 Preprocessor: EQUs and IFs", "[preprocessor]") {
+TEST_CASE("Stage 1 Preprocessor: EQUs", "[preprocessor][equs]") {
     SKIP_SECTION("Basic EQU functionality") {
-        stringstream equ_input{
-            "X: EQU 10\n"
+        stringstream input{
+            "X: EQU 0x12E4\n"
             "CONSTANT: CONST X\n"
             "FREESPACE: SPACE X\n"};
 
         stringstream expected{
-            "CONSTANT: CONST 10\n"
-            "FREESPACE: SPACE 10\n"};
+            "CONSTANT: CONST 0x12E4\n"
+            "FREESPACE: SPACE 0x12E4\n"};
 
-        REQUIRE(preprocess_equs_ifs(lex(equ_input)) == lex(expected));
-    }
-
-    SKIP_SECTION("Basic IF functionality") {
-        // dunno
+        REQUIRE(preprocess_equs_ifs(lex(input)) == lex(expected));
     }
 }
 
-TEST_CASE("Stage 2 Preprocessor: MACROs", "[preprocessor]") {
+TEST_CASE("Stage 1 Preprocessor: IFs", "[preprocessor][ifs]") {
+    SKIP_SECTION("Basic IF functionality") {
+        {
+            stringstream input{
+                "DEBUG: EQU 1\n"
+                "IF DEBUG\n"
+                "PRINT: HELLO WORLD\n"
+                "JMP PRINT\n"};
+            stringstream expected{
+                "DEBUG: EQU 1\n"
+                "PRINT: HELLO WORLD\n"
+                "JMP PRINT\n"};
+            REQUIRE(preprocess_equs_ifs(lex(input)) == lex(expected));
+        }
+        {
+            stringstream input{
+                "DEBUG: EQU 0\n"
+                "IF DEBUG\n"
+                "PRINT: HELLO WORLD\n"
+                "JMP PRINT\n"};
+            stringstream expected{
+                "DEBUG: EQU 1\n"
+                "JMP PRINT\n"};
+            REQUIRE(preprocess_equs_ifs(lex(input)) == lex(expected));
+        }
+    }
+}
+
+TEST_CASE("Stage 2 Preprocessor: MACROs", "[preprocessor][macros]") {
     SKIP_SECTION("Basic macro functionality") {
         stringstream macro_input{
             "M: MACRO &X \n"
