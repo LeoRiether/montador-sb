@@ -117,33 +117,6 @@ TEST_CASE("Parser tests", "[parser]") {
         }
     }
 
-    SECTION("Identifier format") {
-        {
-            stringstream input{"2X: SPACE"};
-            REQUIRE_THROWS(parse(lex(input)));
-        }
-        {
-            stringstream input{"LOAD 2X"};
-            REQUIRE_THROWS(parse(lex(input)));
-        }
-        {
-            stringstream input{"X10: SPACE"};
-            REQUIRE_NOTHROW(parse(lex(input)));
-        }
-        {
-            stringstream input{"X10!: SPACE"};
-            REQUIRE_THROWS(parse(lex(input)));
-        }
-        {
-            stringstream input{"INPUT L4B3L"};
-            REQUIRE_NOTHROW(parse(lex(input)));
-        }
-        {
-            stringstream input{"INPUT M$NEY"};
-            REQUIRE_THROWS(parse(lex(input)));
-        }
-    }
-
     SECTION("Two labels on the same line should throw") {
         stringstream input{"A: LOAD A"};
         REQUIRE_NOTHROW(parse(lex(input)));

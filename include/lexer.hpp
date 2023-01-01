@@ -24,7 +24,7 @@ bool is_whitespace(char);
 Token str_to_uppercase(const Token& s);
 
 enum LexerState {
-    Idle, Ident, Comment
+    Idle, Ident, Number, Hex, Comment
 };
 
 vector<Token> lex(std::istream& input);
