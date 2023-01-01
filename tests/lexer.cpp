@@ -101,6 +101,16 @@ TEST_CASE("Lexer tests", "[lexer]") {
             REQUIRE(lex(input) == expected);
         }
         {
+            stringstream input{"N: CONST -10"};
+            vector<string> expected = {"N", ":", "CONST", "-10", "\n"};
+            REQUIRE(lex(input) == expected);
+        }
+        {
+            stringstream input{"N: CONST -0x123ABC"};
+            vector<string> expected = {"N", ":", "CONST", "-0X123ABC", "\n"};
+            REQUIRE(lex(input) == expected);
+        }
+        {
             stringstream input{"N: CONST 1x234"};
             REQUIRE_THROWS(lex(input));
         }

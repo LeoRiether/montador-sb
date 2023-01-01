@@ -28,32 +28,12 @@ std::ostream& operator<<(std::ostream& os, const Line& line) {
     return os << line.to_string();
 }
 
-// TODO: revise the valid_identifier rules!
-// TODO: in hindsight, o erro dado quando o identificador não é válido é léxico,
-// e de fato o lexer poderia detectar o erro 
-bool valid_identifier(const string& s) {
-    if (s.empty())
-        return false;
-    if (s[0] >= '0' && s[0] <= '9')
-        return false;
-    for (char c : s) {
-        bool character = c >= 'A' && c <= 'Z';
-        bool digit = c >= '0' && c <= '9';
-        if (!character && !digit)
-            return false;
-    }
-    return true;
-}
-
 // TODO: talvez dê overflow pra positivos com 16 bits
 // TODO: talvez esteja errado pra negativos ainda
 // Faz o parsing de um número em `s`
 // e retorna nullopt caso o formato seja inválido,
 // ou o int16_t correspondente.
 optional<int16_t> parse_number(string s) {
-    if (s.empty())
-        return {};
-
     int16_t ans = 0;
     bool neg = false;
 
@@ -61,6 +41,12 @@ optional<int16_t> parse_number(string s) {
         neg = true;
         s = s.substr(1);
     }
+
+    // The lexer already did most of the validation for us,
+    // so we know that if the first character is a digit, then
+    // the rest of the number should be well-formed
+    if (!isdigit(s[0]))
+        return {};
 
     // hexadecimal
     if (s.substr(0, 2) == "0X") {
@@ -70,8 +56,6 @@ optional<int16_t> parse_number(string s) {
                 ans += c - '0';
             else if (c >= 'A' && c <= 'Z')
                 ans += c - 'A' + 10;
-            else
-                return {};
         }
 
         return neg ? -ans : ans;
@@ -80,10 +64,7 @@ optional<int16_t> parse_number(string s) {
     // decimal
     for (char c : s) {
         ans *= 10;
-        if (c >= '0' && c <= '9')
-            ans += c - '0';
-        else
-            return {};
+        ans += c - '0';
     }
 
     return neg ? -ans : ans;
@@ -104,11 +85,12 @@ vector<Line> parse(const vector<Token>& tokens) {
 
         // Parse a label
         else if (i + 1 < n && tokens[i + 1] == ":") {
-            // malformed token
-            if (!valid_identifier(tokens[i]))
-                throw AssemblerError(
-                    "Parser", "Token inesperado <" + tokens[i] + ">",
-                    tokens[i].line, tokens[i].column);
+            if (parse_number(tokens[i]))
+                throw AssemblerError("Parser",
+                                     "Número encontrado, mas era esperado um "
+                                     "identificador em <" +
+                                         tokens[i] + ">",
+                                     tokens[i].line, tokens[i].column);
 
             Line line{Line::IsLabel, {tokens[i]}};
             i += 2;
@@ -137,10 +119,12 @@ vector<Line> parse(const vector<Token>& tokens) {
                         "Argumento faltando para a instrução <" + tokens[i] +
                             ">",
                         tokens[i].line, tokens[j].column);
-                else if (!valid_identifier(tokens[i + j]))  // malformed token
-                    throw AssemblerError(
-                        "Parser", "Token inesperado <" + tokens[i + j] + ">",
-                        tokens[i + j].line, tokens[i + j].column);
+                else if (parse_number(tokens[i]))
+                    throw AssemblerError("Parser",
+                                         "Número encontrado, mas era esperado "
+                                         "um identificador em <" +
+                                             tokens[i] + ">",
+                                         tokens[i].line, tokens[i].column);
 
                 // Token válido! Add à linha
                 line.data[j] = tokens[i + j];

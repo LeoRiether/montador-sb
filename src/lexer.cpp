@@ -65,7 +65,7 @@ vector<Token> lex(std::istream& input) {
                                          "':' sem identificador de label", line,
                                          column);
 
-                } else if (isdigit(c)) {
+                } else if (isdigit(c) || c == '-') {
                     // Start of a number or hex
                     current = Token{line, column, std::string{c}};
                     st = Number;
@@ -109,7 +109,7 @@ vector<Token> lex(std::istream& input) {
                     current.push_back(c);
                 } else if (c == 'X') {
                     current.push_back(c);
-                    if (current != "0X")
+                    if (current != "0X" && current != "-0X")
                         throw AssemblerError(
                             "Lexer", "Número mal formado: <" + current + ">",
                             line, column);
