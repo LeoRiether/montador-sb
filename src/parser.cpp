@@ -86,7 +86,7 @@ vector<Line> parse(const vector<Token>& tokens) {
         // Parse a label
         else if (i + 1 < n && tokens[i + 1] == ":") {
             if (parse_number(tokens[i]))
-                throw AssemblerError("Parser",
+                throw AssemblerError("Sintático",
                                      "Número encontrado, mas era esperado um "
                                      "identificador em <" +
                                          tokens[i] + ">",
@@ -97,7 +97,7 @@ vector<Line> parse(const vector<Token>& tokens) {
 
             if (i + 1 < n && tokens[i + 1] == ":") {
                 throw AssemblerError(
-                    "Parser", "Duas labels foram declaradas na mesma linha",
+                    "Sintático", "Duas labels foram declaradas na mesma linha",
                     tokens[i].line, tokens[i].column);
             }
 
@@ -115,12 +115,12 @@ vector<Line> parse(const vector<Token>& tokens) {
                 // Verificamos se o token i+j é válido
                 if (i + j >= n)
                     throw AssemblerError(
-                        "Parser",
+                        "Sintático",
                         "Argumento faltando para a instrução <" + tokens[i] +
                             ">",
                         tokens[i].line, tokens[j].column);
                 else if (parse_number(tokens[i]))
-                    throw AssemblerError("Parser",
+                    throw AssemblerError("Sintático",
                                          "Número encontrado, mas era esperado "
                                          "um identificador em <" +
                                              tokens[i] + ">",
@@ -133,7 +133,7 @@ vector<Line> parse(const vector<Token>& tokens) {
 
             // Depois da instrução devemos ter uma nova linha
             if (i >= n || tokens[i] != "\n") {
-                throw AssemblerError("Parser",
+                throw AssemblerError("Sintático",
                                      "Token extra após instrução " +
                                          tokens[i - instr.size] + ": <" +
                                          tokens[i] + ">",
@@ -171,7 +171,7 @@ vector<Line> parse(const vector<Token>& tokens) {
                 i++;
             } else {
                 throw AssemblerError(
-                    "Parser", "Há um argumento faltando para a diretiva CONST",
+                    "Sintático", "Há um argumento faltando para a diretiva CONST",
                     tokens[i - 1].line, tokens[i - 1].column);
             }
 
@@ -182,15 +182,15 @@ vector<Line> parse(const vector<Token>& tokens) {
         else if (tokens[i] == "SECTION") {
             Line line{Line::IsSection, {Token{}}};
             if (i + 1 >= n || tokens[i + 1] == "\n")
-                throw AssemblerError("Parser", "Diretiva SECTION sem argumento",
+                throw AssemblerError("Sintático", "Diretiva SECTION sem argumento",
                                      tokens[i].line, tokens[i].column);
             if (tokens[i + 1] != "TEXT" && tokens[i + 1] != "DATA")
                 throw AssemblerError(
-                    "Parser", "SECTION desconhecida <" + tokens[i + 1] + ">",
+                    "Sintático", "SECTION desconhecida <" + tokens[i + 1] + ">",
                     tokens[i + 1].line, tokens[i + 1].column);
             if (i + 2 < n && tokens[i + 2] != "\n")
                 throw AssemblerError(
-                    "Parser",
+                    "Sintático",
                     "Argumento extra em declaração de seção <" + tokens[i + 2] +
                         ">",
                     tokens[i + 2].line, tokens[i + 2].column);
@@ -204,7 +204,7 @@ vector<Line> parse(const vector<Token>& tokens) {
         // What is this token?
         else {
             throw AssemblerError(
-                "Parser",
+                "Sintático",
                 "Instrução/diretiva desconhecida: <" + tokens[i] + ">",
                 tokens[i].line, tokens[i].column);
         }

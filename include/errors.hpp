@@ -9,10 +9,10 @@ using std::to_string;
 
 #ifdef COLOR
 #define BUILD_ERROR_STRING(err_type, msg, line, column) \
-    "\033[91m" + err_type + " error\033[0m in \033[92m" + to_string(line) + ":" + to_string(column) + "\033[0m: " + msg
+    "\033[91mErro " + err_type + " \033[0m na linha \033[92m" + to_string(line) + ", coluna " + to_string(column) + "\033[0m: " + msg
 #else
 #define BUILD_ERROR_STRING(err_type, msg, line, column) \
-    err_type + " error in " + to_string(line) + ":" + to_string(column) + ": " + msg
+    "Erro " + err_type + " na linha " + to_string(line) + ", coluna " + to_string(column) + ": " + msg
 #endif
 
 class AssemblerError : public exception {

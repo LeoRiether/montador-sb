@@ -75,7 +75,7 @@ vector<Token> lex(std::istream& input) {
                     st = Ident;
                 } else {
                     throw AssemblerError(
-                        "Lexer", "Caracter <" + std::string{c} + "> inesperado",
+                        "Léxico", "Caracter <" + std::string{c} + "> inesperado",
                         line, column);
                 }
                 break;
@@ -99,7 +99,7 @@ vector<Token> lex(std::istream& input) {
                     current.push_back(c);
                 } else {
                     throw AssemblerError(
-                        "Lexer", "Caracter <" + std::string{c} + "> inesperado",
+                        "Léxico", "Caracter <" + std::string{c} + "> inesperado",
                         line, column);
                 }
                 break;
@@ -111,7 +111,7 @@ vector<Token> lex(std::istream& input) {
                     current.push_back(c);
                     if (current != "0X" && current != "-0X")
                         throw AssemblerError(
-                            "Lexer", "Número mal formado: <" + current + ">",
+                            "Léxico", "Número mal formado: <" + current + ">",
                             line, column);
                     st = Hex;
                 } else if (c == ';') {
@@ -124,7 +124,7 @@ vector<Token> lex(std::istream& input) {
                     st = Idle;
                 } else {
                     throw AssemblerError(
-                        "Lexer", "Caracter <" + std::string{c} + "> inesperado",
+                        "Léxico", "Caracter <" + std::string{c} + "> inesperado",
                         line, column);
                 }
                 break;
@@ -141,7 +141,7 @@ vector<Token> lex(std::istream& input) {
                     push_ident();
                     st = Comment;
                 } else {
-                    throw AssemblerError("Lexer",
+                    throw AssemblerError("Léxico",
                                          "Número hexadecimal mal formado por "
                                          "causa de caracter inesperado <" +
                                              std::string{c} + "> inesperado",
