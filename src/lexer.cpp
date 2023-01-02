@@ -27,8 +27,8 @@ Token str_to_uppercase(const Token& s) {
 }
 
 vector<Token> lex(std::istream& input) {
-    Token current{0, 0};
     int line{1}, column{1};
+    Token current{line, column};
     LexerState st{Idle};
     vector<Token> tokens;
 
