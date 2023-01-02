@@ -74,3 +74,8 @@ inline ostream& operator<<(ostream& os, Box& box) {
 
     return os;
 }
+
+inline ostream& operator<<(ostream& os, Box&& box) {
+    os << box;
+    return os;
+}
