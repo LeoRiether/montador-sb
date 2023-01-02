@@ -1,20 +1,19 @@
 #include <codegen.hpp>
 
-#include <iostream>
-
 #define UNUSED(x) (void)(x);
 
 // First pass of the codegen
 SymbolTable build_symbol_table(const vector<Line> &lines) {
     SymbolTable symbols;
     unsigned int line_counter = 1, location_counter = 0;
+    bool missing_text_section = true;
     for (const auto& line : lines) {
         // Label
         if (line.which == Line::IsLabel) {
             Token label = line.data[0];
             if (symbols.count(label)) {
                 throw AssemblerError(
-                    "Sintático",
+                    "Semântico",
                     "O rótulo <" + label + "> foi definido mais de uma vez.",
                     line_counter, 0);
             }
@@ -37,9 +36,19 @@ SymbolTable build_symbol_table(const vector<Line> &lines) {
             unsigned int instruction_size = instructions.at(instruction).size;
             location_counter += instruction_size;
         }
+        // Section
+        else if (line.which == Line::IsSection) {
+            Token section = line.data[0];
+            if (section == "TEXT") missing_text_section = false;
+        }
 
         line_counter ++;
     }
+
+    if (missing_text_section) {
+        throw AssemblerError("Semântico", "Seção TEXT faltante.", 0, 0);
+    }
+
     return symbols;
 }
 
