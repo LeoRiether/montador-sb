@@ -148,4 +148,19 @@ TEST_CASE("Stage 2 Preprocessor: MACROs", "[preprocessor][macros]") {
 
         REQUIRE_THROWS(preprocess_macros(input));
     }
+    SECTION("Define more than 2 macros") {
+        vector<Token> input = {
+            t("X"), t(":"), t("MACRO"), t("\n"),
+            t("ADD"), t("UM"), t("\n"),
+            t("ENDMACRO"), t("\n"),
+            t("Y"), t(":"), t("MACRO"), t("\n"),
+            t("ADD"), t("DOIS"), t("\n"),
+            t("ENDMACRO"), t("\n"),
+            t("Z"), t(":"), t("MACRO"), t("\n"),
+            t("ADD"), t("TRES"), t("\n"),
+            t("ENDMACRO"), t("\n"),
+        };
+
+        REQUIRE_THROWS(preprocess_macros(input));
+    }
 }
