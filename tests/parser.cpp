@@ -141,6 +141,12 @@ TEST_CASE("Parser tests", "[parser]") {
         input = stringstream{"A: B: LOAD A"};
         REQUIRE_THROWS(parse(lex(input)));
     }
+
+    SECTION("You can't offset an instruction") {
+        stringstream input{"LOAD+10 X\n"};
+        auto tokens = lex(input);
+        REQUIRE_THROWS(parse(tokens));
+    }
 }
 
 TEST_CASE("Parser Segfaults", "[parser][segv]") {

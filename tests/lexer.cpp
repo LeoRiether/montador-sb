@@ -131,6 +131,7 @@ TEST_CASE("Lexer tests", "[lexer]") {
                                    "&Y",    "\n",   "ENDMACRO", "\n"};
         REQUIRE(lex(input) == expected);
     }
+
     SECTION("Label + Offset") {
         stringstream input{
             "LOAD X+2\n"
@@ -146,5 +147,10 @@ TEST_CASE("Lexer tests", "[lexer]") {
             "OOPS", "DATA", "+", "\n",
         };
         REQUIRE(lex(input) == expected);
+    }
+
+    SECTION("Label declarations shouldn't have offsets") {
+        stringstream input{"LABEL+1: LOAD X\n"};
+        REQUIRE_THROWS(lex(input));
     }
 }
