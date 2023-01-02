@@ -22,6 +22,49 @@ Box token_box(const vector<Token>& tokens, const char* title = "Tokens") {
     return box;
 }
 
+int do_preprocessing(std::string file_base);
+int do_macros(std::string file_base);
+int do_object_code(std::string file_base);
+
+int main(int argc, char* argv[]) {
+    if (argc < 3 || argv[1][0] != '-') {
+        cerr << "MONTADOR v1.0\n"
+                "Leonardo Riether <riether.leonardo@gmail.com> e "
+                "Tiago Fernandes <tiagotsf2000@gmail.com>\n"
+                "\n"
+                "Modo de uso: MONTADOR -<ops> <arquivo>\n"
+                "    <ops>:\n"
+                "        p: preprocessamento de EQUs e IFs\n"
+                "        m: preprocessamento até MACROs\n"
+                "        o: gera o arquivo objeto\n"
+                "    <arquivo>: Nome do arquivo .ASM, sem a extensão\n"
+                "\n"
+                "---- OBS! ----\n"
+                "É possível rodar mais de uma operação com uma única chamada "
+                "do montador! Exemplo: `./MONTADOR -pmo <arquivo>`. As "
+                "operações são executadas na ordem especificada, ou seja "
+                "p -> m -> o"
+             << endl;
+        return 1;
+    }
+
+    for (char* op = argv[1] + 1; *op; op++) {
+        int ret;
+        if (*op == 'p') ret = do_preprocessing(argv[2]);
+        else if (*op == 'm') ret = do_macros(argv[2]);
+        else if (*op == 'o') ret = do_object_code(argv[2]);
+        else {
+            cerr << "A operação <" << argv[1] << "> não existe" << endl;
+            return 1;
+        }
+
+        if (ret != 0)
+            return ret;
+    }
+
+    return 0;
+}
+
 // Lê um arquivo ASM e produz um PRE
 int do_preprocessing(std::string file_base) {
     std::ifstream file(file_base + ".ASM");
@@ -139,45 +182,6 @@ int do_object_code(std::string file_base) {
     } catch (AssemblerError& e) {
         std::cerr << e.what() << std::endl;
         return 1;
-    }
-
-    return 0;
-}
-
-int main(int argc, char* argv[]) {
-    if (argc < 3 || argv[1][0] != '-') {
-        cerr << "MONTADOR v1.0\n"
-                "Leonardo Riether <riether.leonardo@gmail.com> e "
-                "Tiago Fernandes <tiagotsf2000@gmail.com>\n"
-                "\n"
-                "Modo de uso: MONTADOR -<ops> <arquivo>\n"
-                "    <ops>:\n"
-                "        p: preprocessamento de EQUs e IFs\n"
-                "        m: preprocessamento até MACROs\n"
-                "        o: gera o arquivo objeto\n"
-                "    <arquivo>: Nome do arquivo .ASM, sem a extensão\n"
-                "\n"
-                "---- OBS! ----\n"
-                "É possível rodar mais de uma operação com uma única chamada "
-                "do montador! Exemplo: `./MONTADOR -pmo <arquivo>`. As "
-                "operações são executadas na ordem especificada, ou seja "
-                "p -> m -> o"
-             << endl;
-        return 1;
-    }
-
-    for (char* op = argv[1] + 1; *op; op++) {
-        int ret;
-        if (*op == 'p') ret = do_preprocessing(argv[2]);
-        else if (*op == 'm') ret = do_macros(argv[2]);
-        else if (*op == 'o') ret = do_object_code(argv[2]);
-        else {
-            cerr << "A operação <" << argv[1] << "> não existe" << endl;
-            return 1;
-        }
-
-        if (ret != 0)
-            return ret;
     }
 
     return 0;
