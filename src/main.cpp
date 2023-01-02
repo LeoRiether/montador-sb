@@ -27,9 +27,13 @@ int do_preprocessing(std::string file_base) {
     std::ifstream file(file_base + ".ASM");
     std::ofstream output(file_base + ".PRE");
     if (!file.is_open()) {
-        cerr << "Não foi possível abrir o arquivo <" << file_base << ".ASM"
-             << "> na fase de preprocessamento de EQUs e IFs" << endl;
-        return 1;
+        file.open(file_base + ".asm"); // abre o .asm também
+                                       // pq a gente não se era .ASM ou .asm
+        if (!file.is_open()) {
+            cerr << "Não foi possível abrir o arquivo <" << file_base << ".ASM"
+                 << "> na fase de preprocessamento de EQUs e IFs" << endl;
+            return 1;
+        }
     }
 
     // Preprocessing step 1
