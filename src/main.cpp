@@ -57,8 +57,13 @@ int main(int argc, char* argv[]) {
         // Print tokens
         {
             Box box{"Tokens"};
-            for (const auto& tok : tokens)
-                box << "<" << tok << "> ";
+            for (string tok : tokens) {
+                if (tok != "\n") {
+                    box << "<" << tok << "> ";
+                } else {
+                    box << "<\\n>\n";
+                }
+            }
             cerr << box << endl;
         }
 
