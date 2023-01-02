@@ -7,6 +7,10 @@ using std::stringstream;
 
 #define SKIP_SECTION(...) if (false)
 
+Token t(const char* s) {
+    return Token{0, 0, s};
+}
+
 TEST_CASE("Stage 1 Preprocessor: EQUs", "[preprocessor][equs]") {
     SKIP_SECTION("Basic EQU functionality") {
         stringstream input{
@@ -52,23 +56,23 @@ TEST_CASE("Stage 1 Preprocessor: IFs", "[preprocessor][ifs]") {
 
 TEST_CASE("Stage 2 Preprocessor: MACROs", "[preprocessor][macros]") {
     SKIP_SECTION("Basic macro functionality") {
-        stringstream macro_input{
-            "M: MACRO &X \n"
-            "LOAD &X ; read x \n"
-            "ADD TWO ; sum 2 \n"
-            "ENDMACRO \n"
-            "\n"
-            "M X\n"
-            "M Y\n"
-            "A B C\n"};
+        vector<Token> input = {
+            t("M"), t(":"), t("MACRO"), t("&X"), t("\n"),
+            t("LOAD"), t("&X"), t("\n"),
+            t("ADD"), t("TWO"), t("\n"),
+            t("ENDMACRO"), t("\n"),
+            t("M"), t("X"), t("\n"),
+            t("M"), t("Y"), t("\n"),
+            t("A"), t("B"), t("C"), t("\n"),
+        };
+        vector<Token> expected = {
+            t("LOAD"), t("X"), t("\n"),
+            t("LOAD"), t("TWO"), t("\n"),
+            t("LOAD"), t("Y"), t("\n"),
+            t("LOAD"), t("TWO"), t("\n"),
+            t("A"), t("B"), t("C"), t("\n"),
+        };
 
-        stringstream expected{
-            "LOAD X \n"
-            "ADD TWO \n"
-            "LOAD Y \n"
-            "ADD TWO \n"
-            "A B C\n"};
-
-        REQUIRE(preprocess_equs_ifs(lex(macro_input)) == lex(expected));
+        REQUIRE(preprocess_equs_ifs(input) == expected);
     }
 }
