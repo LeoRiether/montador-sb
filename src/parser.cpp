@@ -114,25 +114,39 @@ vector<Line> parse(const vector<Token>& tokens) {
         else if (instructions.count(tokens[i])) {
             Line line{Line::IsInstruction};
             const auto& instr = instructions.at(tokens[i]);
-            line.data[0] = tokens[i];
+            line.data[0] = tokens[i++];
 
             // Verificação dos argumentos da instrução
             for (size_t j = 1; j < instr.size; j++) {
                 // Verificamos se o token i+j é válido
-                if (i + j >= n || !is_identifier(tokens[i + 1]))
+                if (i >= n || !is_identifier(tokens[i]))
                     throw AssemblerError(
                         "Sintático",
-                        "Argumento faltando para a instrução <" + tokens[i] +
+                        "Argumento faltando para a instrução <" + tokens[i-1] +
                             ">",
-                        tokens[i].line, tokens[j].column);
+                        tokens[i-1].line, tokens[i-1].column);
 
                 // Token válido! Add à linha
-                line.data[j] = tokens[i + j];
+                line.data[j] = tokens[i++];
+
+                // Talvez a label tenha offset
+                if (i < n && tokens[i] == "+") {
+                    i++; // skip '+'
+                    optional<int16_t> opt;
+                    if (i >= n || !(opt = parse_number(tokens[i])))
+                        throw AssemblerError("Sintático",
+                                             "Era esperado um offset após o "
+                                             "'+', mas foi encontrado <" +
+                                                 tokens[i] + ">",
+                                             tokens[i].line, tokens[i].column);
+
+                    (j == 1 ? line.num : line.num2) = *opt;
+                    i++; // skip offset
+                }
             }
-            i += instr.size;
 
             // Depois da instrução devemos ter uma nova linha
-            if (i >= n || tokens[i] != "\n") {
+            if (i < n && tokens[i] != "\n") {
                 throw AssemblerError("Sintático",
                                      "Token extra após instrução " +
                                          tokens[i - instr.size] + ": <" +

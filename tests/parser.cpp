@@ -15,20 +15,37 @@ TEST_CASE("Parser tests", "[parser]") {
         stringstream input{
             "SECTION TEXT  \n"
             "LOOP: LOAD X  \n"
-            "A:    ADD Y   \n"
-            "      STORE X \n"
+            "A:    ADD Y+0xAB3   \n"
+            "      STORE X+2 \n"
             "J:            \n"
             "      JMP LOOP\n"};
 
         vector<Line> expected{
             Line{Line::IsSection, {t("TEXT")}},
             Line{Line::IsLabel, {t("LOOP")}},
-            Line{Line::IsInstruction, {t("LOAD"), t("X")}},
+            Line{Line::IsInstruction, {t("LOAD"), t("X")}, 0},
             Line{Line::IsLabel, {t("A")}},
-            Line{Line::IsInstruction, {t("ADD"), t("Y")}},
-            Line{Line::IsInstruction, {t("STORE"), t("X")}},
+            Line{Line::IsInstruction, {t("ADD"), t("Y")}, 0xAB3},
+            Line{Line::IsInstruction, {t("STORE"), t("X")}, 2},
             Line{Line::IsLabel, {t("J")}},
             Line{Line::IsInstruction, {t("JMP"), t("LOOP")}},
+        };
+
+        REQUIRE(parse(lex(input)) == expected);
+    }
+
+    SECTION("COPY instruction") {
+        stringstream input{
+            "COPY A,B\n"
+            "COPY X+2,Y\n"
+            "COPY DATA,DATA+0x9F\n"
+            "COPY Q+1,Q+3\n"};
+
+        vector<Line> expected{
+            Line{Line::IsInstruction, {t("COPY"), t("A"), t("B")}, 0, 0},
+            Line{Line::IsInstruction, {t("COPY"), t("X"), t("Y")}, 2, 0},
+            Line{Line::IsInstruction, {t("COPY"), t("DATA"), t("DATA")}, 0, 0x9f},
+            Line{Line::IsInstruction, {t("COPY"), t("Q"), t("Q")}, 1, 3},
         };
 
         REQUIRE(parse(lex(input)) == expected);

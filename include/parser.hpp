@@ -14,10 +14,7 @@ struct Line {
 
     Type which;
     Token data[3] = {Token{}, Token{}, Token{}};
-    int16_t num{0};  // only used if which == IsDirective...
-                     // because I don't know how to work with unions
-                     // in C++!!!
-                     // thanks Bjarne
+    int16_t num{0}, num2{0};  
 
     bool operator==(const Line& rhs) const;
     string to_string() const;

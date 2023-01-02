@@ -136,11 +136,13 @@ TEST_CASE("Lexer tests", "[lexer]") {
             "LOAD X+2\n"
             "INPUT DATA+0\n"
             "COPY SOMETHING+0x1A\n"
+            "COPY X+1,X+2\n"
             "OOPS DATA+;comment"};
         vector<string> expected = {
             "LOAD", "X", "+", "2", "\n",
             "INPUT", "DATA", "+", "0", "\n",
             "COPY", "SOMETHING", "+", "0X1A", "\n",
+            "COPY", "X", "+", "1", "X", "+", "2", "\n",
             "OOPS", "DATA", "+", "\n",
         };
         REQUIRE(lex(input) == expected);
