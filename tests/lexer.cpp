@@ -5,6 +5,10 @@
 
 using std::stringstream;
 
+inline Token t(const char* s) {
+    return Token{0, 0, s};
+}
+
 bool operator==(const vector<Token>& a, const vector<string>& b) {
     if (a.size() != b.size())
         return false;
@@ -152,5 +156,41 @@ TEST_CASE("Lexer tests", "[lexer]") {
     SECTION("Label declarations shouldn't have offsets") {
         stringstream input{"LABEL+1: LOAD X\n"};
         REQUIRE_THROWS(lex(input));
+    }
+}
+
+TEST_CASE("cout << vector<Token> tests", "[lexer][tokens-to-string]") {
+    SECTION("Easy instructions work") {
+        stringstream os;
+        vector<Token> tokens = {t("LABEL"), t(":"),     t("LOAD"), t("X"),
+                                t("\n"),    t("INPUT"), t("Y"),    t("\n")};
+        os << tokens;
+        REQUIRE(os.str() == "LABEL: LOAD X\nINPUT Y\n");
+    }
+    SECTION("COPY works") {
+        stringstream os;
+        vector<Token> tokens = {t("COPY"), t("ARG1"), t("ARG2"), t("\n")};
+        os << tokens;
+        REQUIRE(os.str() == "COPY ARG1,ARG2\n");
+    }
+    SECTION("MACROs work") {
+        stringstream os;
+        vector<Token> tokens = {t("LOADD"), t(":"),   t("MACRO"), t("&X"),
+                                t("&Y"),    t("\n"),  t("LOAD"),  t("&X"),
+                                t("\n"),    t("ADD"), t("&Y"),    t("\n")};
+        os << tokens;
+        REQUIRE(os.str() ==
+                "LOADD: MACRO &X,&Y\n"
+                "LOAD &X\n"
+                "ADD &Y\n");
+    }
+    SECTION("Label offsets work") {
+        stringstream os;
+        vector<Token> tokens = {
+            t("DIV"),    t("TWO"),   t("+"), t("2"), t("\n"),
+            t("OUTPUT"), t("EIGHT"), t("+"), t("8"), t("\n"),
+        };
+        os << tokens;
+        REQUIRE(os.str() == "DIV TWO+2\nOUTPUT EIGHT+8\n");
     }
 }
