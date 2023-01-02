@@ -10,7 +10,7 @@
 using std::cerr;
 using std::endl;
 
-Box token_box(const vector<Token>& tokens, const char* title = "Token") {
+Box token_box(const vector<Token>& tokens, const char* title = "Tokens") {
     Box box{title};
     for (string tok : tokens) {
         if (tok != "\n") {
@@ -42,6 +42,7 @@ int do_preprocessing(std::string file_base) {
         tokens = lex(file);
         cerr << token_box(tokens) << endl;
         tokens = preprocess_equs_ifs(tokens);
+        cerr << token_box(tokens, "Tokens (Sem EQUs e IFs)") << endl;
         output << tokens;
         output.close();
     } catch (AssemblerError& e) {
