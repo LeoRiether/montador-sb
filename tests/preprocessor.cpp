@@ -7,7 +7,7 @@ using std::stringstream;
 
 #define SKIP_SECTION(...) if (false)
 
-Token t(const char* s) {
+inline Token t(const char* s) {
     return Token{0, 0, s};
 }
 
