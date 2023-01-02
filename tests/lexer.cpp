@@ -119,5 +119,30 @@ TEST_CASE("Lexer tests", "[lexer]") {
             REQUIRE_THROWS(lex(input));
         }
     }
-}
 
+    SECTION("Macro arguments") {
+        stringstream input{
+            "LOADD: MACRO &X, &Y\n"
+            "LOAD &X\n"
+            "ADD &Y\n"
+            "ENDMACRO\n"};
+        vector<string> expected = {"LOADD", ":",    "MACRO",    "&X", "&Y",
+                                   "\n",    "LOAD", "&X",       "\n", "ADD",
+                                   "&Y",    "\n",   "ENDMACRO", "\n"};
+        REQUIRE(lex(input) == expected);
+    }
+    SECTION("Label + Offset") {
+        stringstream input{
+            "LOAD X+2\n"
+            "INPUT DATA+0\n"
+            "COPY SOMETHING+0x1A\n"
+            "OOPS DATA+;comment"};
+        vector<string> expected = {
+            "LOAD", "X", "+", "2", "\n",
+            "INPUT", "DATA", "+", "0", "\n",
+            "COPY", "SOMETHING", "+", "0X1A", "\n",
+            "OOPS", "DATA", "+", "\n",
+        };
+        REQUIRE(lex(input) == expected);
+    }
+}

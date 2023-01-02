@@ -4,7 +4,8 @@
 
 // similar to https://en.cppreference.com/w/cpp/string/byte/isspace
 bool is_whitespace(char c) {
-    return c == ' ' || c == '\t' || c == '\r' || c == '\f' || c == '\v';
+    return c == ' ' || c == '\t' || c == '\r' || c == '\f' || c == '\v' ||
+           c == ',';
 }
 
 bool is_ident_char(char c) {
@@ -27,7 +28,7 @@ Token str_to_uppercase(const Token& s) {
 
 vector<Token> lex(std::istream& input) {
     Token current{0, 0};
-    int line{0}, column{0};
+    int line{1}, column{1};
     LexerState st{Idle};
     vector<Token> tokens;
 
@@ -69,14 +70,15 @@ vector<Token> lex(std::istream& input) {
                     // Start of a number or hex
                     current = Token{line, column, std::string{c}};
                     st = Number;
-                } else if (is_ident_char(c)) {
-                    // Start of an ident
+                } else if (is_ident_char(c) || c == '&') {
+                    // Start of an ident or macro argument
                     current = Token{line, column, std::string{c}};
                     st = Ident;
                 } else {
                     throw AssemblerError(
-                        "Léxico", "Caracter <" + std::string{c} + "> inesperado",
-                        line, column);
+                        "Léxico",
+                        "Caracter <" + std::string{c} + "> inesperado", line,
+                        column);
                 }
                 break;
 
@@ -97,10 +99,17 @@ vector<Token> lex(std::istream& input) {
                     st = Idle;
                 } else if (is_ident_char(c) || isdigit(c)) {
                     current.push_back(c);
+                } else if (c == '+') {
+                    push_ident();
+                    current = Token{line, column, std::string{c}};
+                    push_ident();
+                    current = Token{line, column + 1, ""};
+                    st = Number;
                 } else {
                     throw AssemblerError(
-                        "Léxico", "Caracter <" + std::string{c} + "> inesperado",
-                        line, column);
+                        "Léxico",
+                        "Caracter <" + std::string{c} + "> inesperado", line,
+                        column);
                 }
                 break;
 
@@ -124,8 +133,9 @@ vector<Token> lex(std::istream& input) {
                     st = Idle;
                 } else {
                     throw AssemblerError(
-                        "Léxico", "Caracter <" + std::string{c} + "> inesperado",
-                        line, column);
+                        "Léxico",
+                        "Caracter <" + std::string{c} + "> inesperado", line,
+                        column);
                 }
                 break;
 
@@ -161,7 +171,7 @@ vector<Token> lex(std::istream& input) {
         // Update current position
         if (c == '\n') {
             line++;
-            column = 0;
+            column = 1;
         } else {
             column++;
         }
