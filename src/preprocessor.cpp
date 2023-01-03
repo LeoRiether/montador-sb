@@ -16,6 +16,7 @@ void macro_call(size_t &i, const vector<Token> &tokens,
     auto [number_arguments, definition_address] = mnt[macro];
     std::unordered_map<string, Token> arguments;
 
+    // Process arguments
     i++;
     while (tokens[i] != "\n") {
         string arg_label = "#" + to_string(arguments.size() + 1);
@@ -83,6 +84,7 @@ vector<Token> preprocess_macros(const vector<Token>& tokens) {
 
             std::unordered_map<string, int> arguments;
 
+            // Process arguments
             i ++;
             while (tokens[i] != "\n") {
                 if (tokens[i][0] != '&') {
@@ -108,20 +110,19 @@ vector<Token> preprocess_macros(const vector<Token>& tokens) {
 
             i ++;
             while (tokens[i] != "ENDMACRO") {
-
+                // Argument
                 if (arguments.count(tokens[i])) {
                     string arg_label = "#" + to_string(arguments[tokens[i]]);
                     mdt.push_back(Token(
                         tokens[i].line, tokens[i].column, arg_label)
                     );
                 }
-                
-                else {
-                    if (mnt.count(tokens[i]))
-                        // Macro call inside a macro definition
-                        macro_call(i, tokens, mdt, mnt, mdt);
-                    else
-                        mdt.push_back(tokens[i]);
+                // Macro call inside the macro definition
+                else if (mnt.count(tokens[i])) {
+                    macro_call(i, tokens, mdt, mnt, mdt);
+                }
+                else{
+                    mdt.push_back(tokens[i]);
                 }
 
                 i ++;
@@ -146,8 +147,6 @@ vector<Token> preprocess_macros(const vector<Token>& tokens) {
             processed_tokens.push_back(tokens[i]);
         }
     }
-
-
 
     return processed_tokens;
 }
