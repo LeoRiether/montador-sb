@@ -67,9 +67,9 @@ TEST_CASE("Stage 2 Preprocessor: MACROs", "[preprocessor][macros]") {
         };
         vector<Token> expected = {
             t("LOAD"), t("X"), t("\n"),
-            t("LOAD"), t("TWO"), t("\n"),
+            t("ADD"), t("TWO"), t("\n"),
             t("LOAD"), t("Y"), t("\n"),
-            t("LOAD"), t("TWO"), t("\n"),
+            t("ADD"), t("TWO"), t("\n"),
             t("A"), t("B"), t("C"), t("\n"),
         };
 
@@ -162,5 +162,26 @@ TEST_CASE("Stage 2 Preprocessor: MACROs", "[preprocessor][macros]") {
         };
 
         REQUIRE_THROWS(preprocess_macros(input));
+    }
+
+    SECTION("One Macro inside the other") {
+        vector<Token> input = {
+            t("SUM2"), t(":"), t("MACRO"), t("&X"), t("\n"),
+            t("ADD"), t("TWO"), t("\n"),
+            t("ENDMACRO"), t("\n"),
+            t("SUM1"), t(":"), t("MACRO"), t("&X"), t("\n"),
+            t("ADD"), t("ONE"), t("\n"),
+            t("SUM2"), t("&X"), t("\n"),
+            t("ADD"), t("TREE"), t("\n"),
+            t("ENDMACRO"), t("\n"),
+            t("SUM1"), t("TWO"), t("\n"),
+        };
+        vector<Token> expected = {
+            t("ADD"), t("ONE"), t("\n"),
+            t("ADD"), t("TWO"), t("\n"),
+            t("ADD"), t("TREE"), t("\n"),
+        };
+
+        REQUIRE(preprocess_macros(input) == expected);
     }
 }
