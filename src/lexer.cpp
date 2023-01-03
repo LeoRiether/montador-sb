@@ -183,12 +183,18 @@ vector<Token> lex(std::istream& input) {
 }
 
 std::ostream& operator<<(std::ostream& os, const vector<Token>& tokens) {
-    size_t n = tokens.size();
-    for (size_t i = 0; i < n; i++) {
+    int n = tokens.size();
+    for (int i = 0; i < n; i++) {
         const auto& token = tokens[i];
         os << token;
-        if (i + 1 < n && token != "\n" && tokens[i + 1] != "\n" &&
-            tokens[i + 1] != ":")
+
+        if (i + 1 < n && i - 1 >= 0 &&
+            (tokens[i - 1] == "COPY" || (tokens[i].substr(0, 1) == "&" &&
+                                         tokens[i + 1].substr(0, 1) == "&")))
+            os << ',';
+        else if (i + 1 < n && token != "\n" && token != "+" &&
+                 tokens[i + 1] != "\n" && tokens[i + 1] != ":" &&
+                 tokens[i + 1] != "+")
             os << ' ';
     }
     return os;
