@@ -4,8 +4,46 @@
 using std::string;
 
 vector<Token> preprocess_equs_ifs(const vector<Token>& tokens) {
-    // TODO:
-    return tokens;
+    vector<Token> processed_tokens;
+
+    size_t n = tokens.size();
+    std::unordered_map<string, Token> synonyms;
+
+    for (size_t i = 0; i < n; i++) {
+        if (tokens[i] == "IF") {
+            i ++; // value
+            Token value = synonyms.count(tokens[i]) ?
+                          synonyms[tokens[i]] : tokens[i];
+            if (value != "0") {
+                i += 2; // jump to the next line
+                while (tokens[i] != "\n")
+                    i ++; // skip next line
+            } else {
+                i ++; // skip \n
+            }
+        }
+
+        else if (tokens[i] == "EQU") {
+            processed_tokens.pop_back(); // :
+            processed_tokens.pop_back(); // label
+
+            Token label = tokens[i-2];
+            synonyms[label] = tokens[i+1];
+
+            i += 2; // skip value and \n
+        }
+
+        else if (synonyms.count(tokens[i])) {
+            processed_tokens.push_back(synonyms[tokens[i]]);
+        }
+
+        else {
+            processed_tokens.push_back(tokens[i]);
+        }
+
+    }
+
+    return processed_tokens;
 }
 
 void macro_call(size_t &i, const vector<Token> &tokens,
