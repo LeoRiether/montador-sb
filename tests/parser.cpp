@@ -52,7 +52,7 @@ TEST_CASE("Parser tests", "[parser]") {
     }
 
     SECTION("Weird instructions that don't exist") {
-        stringstream input{"MULT X\n"};
+        stringstream input{"SUBTRAIR X\n"};
         REQUIRE_THROWS(parse(lex(input)));
     }
 
