@@ -14,7 +14,8 @@ vector<Token> preprocess_equs_ifs(const vector<Token>& tokens) {
             i ++;
             Token value = synonyms.count(tokens[i]) ?
                           synonyms[tokens[i]] : tokens[i];
-            if (value != "0") {
+            auto value_opt = parse_number(value);
+            if (value_opt && *value_opt == 0) {
                 i += 2; // jump to the next line
                 while (tokens[i] != "\n")
                     i ++; // skip next line

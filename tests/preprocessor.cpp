@@ -27,27 +27,46 @@ TEST_CASE("Stage 1 Preprocessor: EQUs", "[preprocessor][equs]") {
 }
 
 TEST_CASE("Stage 1 Preprocessor: IFs", "[preprocessor][ifs]") {
-    SKIP_SECTION("Basic IF functionality") {
-        {
+    SECTION("Basic IF functionality") {
+        SECTION("IF 1 preserves next line") {
             stringstream input{
                 "DEBUG: EQU 1\n"
                 "IF DEBUG\n"
                 "PRINT: HELLO WORLD\n"
                 "JMP PRINT\n"};
             stringstream expected{
-                "DEBUG: EQU 1\n"
                 "PRINT: HELLO WORLD\n"
                 "JMP PRINT\n"};
             REQUIRE(preprocess_equs_ifs(lex(input)) == lex(expected));
         }
-        {
+        SECTION("IF 0 discards next line") {
             stringstream input{
                 "DEBUG: EQU 0\n"
                 "IF DEBUG\n"
                 "PRINT: HELLO WORLD\n"
                 "JMP PRINT\n"};
             stringstream expected{
-                "DEBUG: EQU 1\n"
+                "JMP PRINT\n"};
+            REQUIRE(preprocess_equs_ifs(lex(input)) == lex(expected));
+        }
+        SECTION("IF 0x0 discards next line") {
+            stringstream input{
+                "DEBUG: EQU 0x0\n"
+                "IF DEBUG\n"
+                "PRINT: HELLO WORLD\n"
+                "JMP PRINT\n"};
+            stringstream expected{
+                "JMP PRINT\n"};
+            REQUIRE(preprocess_equs_ifs(lex(input)) == lex(expected));
+        }
+        SECTION("IF 0x123 preserves next line") {
+            stringstream input{
+                "DEBUG: EQU 0x123\n"
+                "IF DEBUG\n"
+                "PRINT: HELLO WORLD\n"
+                "JMP PRINT\n"};
+            stringstream expected{
+                "PRINT: HELLO WORLD\n"
                 "JMP PRINT\n"};
             REQUIRE(preprocess_equs_ifs(lex(input)) == lex(expected));
         }
