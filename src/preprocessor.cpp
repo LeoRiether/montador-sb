@@ -11,7 +11,7 @@ vector<Token> preprocess_equs_ifs(const vector<Token>& tokens) {
 
     for (size_t i = 0; i < n; i++) {
         if (tokens[i] == "IF") {
-            i ++; // value
+            i ++;
             Token value = synonyms.count(tokens[i]) ?
                           synonyms[tokens[i]] : tokens[i];
             if (value != "0") {
@@ -22,21 +22,19 @@ vector<Token> preprocess_equs_ifs(const vector<Token>& tokens) {
                 i ++; // skip \n
             }
         }
-
         else if (tokens[i] == "EQU") {
             processed_tokens.pop_back(); // :
             processed_tokens.pop_back(); // label
 
             Token label = tokens[i-2];
-            synonyms[label] = tokens[i+1];
+            Token value = tokens[i+1];
+            synonyms[label] = value;
 
             i += 2; // skip value and \n
         }
-
         else if (synonyms.count(tokens[i])) {
             processed_tokens.push_back(synonyms[tokens[i]]);
         }
-
         else {
             processed_tokens.push_back(tokens[i]);
         }
