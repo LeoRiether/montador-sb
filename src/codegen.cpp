@@ -68,8 +68,11 @@ vector<uint16_t> generate_machine_code(const vector<Line> &lines,
                         "Sêmantico", "O rótulo <" + argument + "> não existe.",
                         argument.line, argument.column);
                 }
-                // TODO: offset memory_addres by argument.num or argument.num2
+
                 uint16_t memory_address = symbols.find(argument)->second;
+                // offset (from the XY+2 syntax)
+                memory_address += (i == 1 ? line.num : line.num2);
+
                 machine_code.push_back(memory_address);
             }
         }
