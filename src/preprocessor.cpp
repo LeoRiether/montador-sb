@@ -8,6 +8,42 @@ vector<Token> preprocess_equs_ifs(const vector<Token>& tokens) {
     return tokens;
 }
 
+void macro_call(size_t &i, const vector<Token> &tokens,
+                vector<Token> &processed_tokens,
+                MacroNameTable &mnt, MacroDefinitionTable &mdt) {
+
+    Token macro = tokens[i];
+    auto [number_arguments, definition_address] = mnt[macro];
+    std::unordered_map<string, Token> arguments;
+
+    i++;
+    while (tokens[i] != "\n") {
+        string arg_label = "#" + to_string(arguments.size() + 1);
+        arguments[arg_label] = tokens[i];
+        i++;
+    }
+
+    if (arguments.size() != number_arguments) {
+        throw AssemblerError(
+            "Semântico",
+            "Quantidade de argumentos da chamada de macro está incorreta.",
+            macro.line, macro.column-1);
+    }
+
+    unsigned j = definition_address;
+    while (mdt[j] != "ENDMACRO") {
+        if (arguments.count(mdt[j])) {
+            processed_tokens.push_back(Token(
+                mdt[j].line, mdt[j].column, arguments[mdt[j]])
+            );
+        } else {
+            processed_tokens.push_back(mdt[j]);
+        }
+
+        j ++;
+    }
+}
+
 vector<Token> preprocess_macros(const vector<Token>& tokens) {
     vector<Token> processed_tokens;
     MacroNameTable mnt;
@@ -78,9 +114,14 @@ vector<Token> preprocess_macros(const vector<Token>& tokens) {
                     mdt.push_back(Token(
                         tokens[i].line, tokens[i].column, arg_label)
                     );
-                } else {
-                    mdt.push_back(tokens[i]);
-                    // TODO: check if tokens[i] é outra macro
+                }
+                
+                else {
+                    if (mnt.count(tokens[i]))
+                        // Macro call inside a macro definition
+                        macro_call(i, tokens, mdt, mnt, mdt);
+                    else
+                        mdt.push_back(tokens[i]);
                 }
 
                 i ++;
@@ -97,36 +138,7 @@ vector<Token> preprocess_macros(const vector<Token>& tokens) {
 
         // Macro call
         else if (mnt.count(tokens[i])) {
-            Token macro = tokens[i];
-            auto [number_arguments, definition_address] = mnt[macro];
-            std::unordered_map<string, Token> arguments;
-
-            i++;
-            while (tokens[i] != "\n") {
-                string arg_label = "#" + to_string(arguments.size() + 1);
-                arguments[arg_label] = tokens[i];
-                i++;
-            }
-
-            if (arguments.size() != number_arguments) {
-                throw AssemblerError(
-                    "Semântico",
-                    "Quantidade de argumentos da chamada de macro está incorreta.",
-                    macro.line, macro.column-1);
-            }
-
-            unsigned j = definition_address;
-            while (mdt[j] != "ENDMACRO") {
-                if (arguments.count(mdt[j])) {
-                    processed_tokens.push_back(Token(
-                        mdt[j].line, mdt[j].column, arguments[mdt[j]])
-                    );
-                } else {
-                    processed_tokens.push_back(mdt[j]);
-                }
-
-                j ++;
-            }
+            macro_call(i, tokens, processed_tokens, mnt, mdt);
         }
 
         // Not related to macros
