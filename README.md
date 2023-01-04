@@ -36,7 +36,7 @@ A interface oferece 3 operações para o usuário:
 É possível utilizar mais de uma operação na mesma execução:
 
 ```
-./MONTADOR -pmo examples/bin.ASM
+./MONTADOR -pmo examples/bin
 ```
 
 O comando acima executará as 3 operações na mesma chamada.
