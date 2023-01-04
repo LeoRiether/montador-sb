@@ -61,8 +61,9 @@ Para mais informações a respeito do funcionamento do montador:
 
 Foi utilizado o framework [Catch2](https://github.com/catchorg/Catch2) para realizar testes de unidade.
 
-Os testes podem ser executador utilizando o cmake:
+Os testes podem ser executados utilizando os comandos:
 
 ```
 ./gen-build.sh && ./build/tests
 ```
+Para executar o `gen-build.sh` é preciso ter o [CMake](https://cmake.org/) instalado.
