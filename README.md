@@ -9,6 +9,7 @@
 
 - Sistema Operacional: Linux (Manjaro/Ubuntu 22.04)
 - Compilador: g++ 11.3.0
+- [Repositório do Projeto](github.com/LeoRiether/montador-sb)
 
 ## Compilação
 
